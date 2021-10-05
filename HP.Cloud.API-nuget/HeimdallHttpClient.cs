@@ -66,11 +66,8 @@ namespace HeimdallPower
             {
                 AuthenticationContext context = new AuthenticationContext(Authority);
                 AuthenticationResult authenticationResult = await context.AcquireTokenAsync(Scope, _certificate);
-                Console.WriteLine(
-                    $"New access token retrieved. The token will expire on {authenticationResult.ExpiresOn}\n");
                 _tokenExpiresOn = authenticationResult.ExpiresOn;
-                HttpClient.DefaultRequestHeaders.Authorization =
-                    new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
+                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
             }
         }
     }
