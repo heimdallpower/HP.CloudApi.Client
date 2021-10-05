@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 namespace HeimdallPower.Entities
 {
-    //todo check if we can use either ApiObjectResponse or ApiResponse
-    public class ApiResponse<T>
+    public class ApiResponse<T> where T: class
     {
-        public List<T> Data = new List<T>();
+        public T Data;
         public string Message;
     }
 }

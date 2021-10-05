@@ -82,7 +82,7 @@ namespace HeimdallPower
         public async Task<LineDto<IcingDataDto>> GetIcingData(LineDto line, SpanDto span, DateTime from, DateTime to)
         {
             var url = BuildIcingUrl(line, span, from, to);
-            var response = await _heimdallClient.Get<ApiObjectResponse<LineDto<IcingDataDto>>>(url);
+            var response = await _heimdallClient.Get<ApiResponse<LineDto<IcingDataDto>>>(url);
 
             return response != null ? response.Data : new();
         }
@@ -101,7 +101,7 @@ namespace HeimdallPower
             SpanPhaseDto spanPhase, DateTime from, DateTime to)
         {
             var url = BuildSagAndClearanceUrl(line, span, spanPhase, from, to);
-            var response = await _heimdallClient.Get<ApiResponse<LineDto<SagAndClearanceDto>>>(url);
+            var response = await _heimdallClient.Get<ApiResponse<List<LineDto<SagAndClearanceDto>>>>(url);
 
             return response != null ? response.Data : new();
         }
