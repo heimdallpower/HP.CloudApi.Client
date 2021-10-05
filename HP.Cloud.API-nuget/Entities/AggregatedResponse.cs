@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace HeimdallApi.Entities
+namespace HeimdallPower.Entities
 {
     public class AggregatedResponse<T> where T : class
     {

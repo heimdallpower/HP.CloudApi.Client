@@ -1,4 +1,4 @@
-﻿namespace HeimdallApi.Enums
+﻿namespace HeimdallPower.Enums
 {
     // See https://www.345tool.com/time-util/time-duration-calculator
     public class IntervalDuration

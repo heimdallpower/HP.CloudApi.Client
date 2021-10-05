@@ -1,4 +1,4 @@
-﻿namespace HeimdallApi.Entities
+﻿namespace HeimdallPower.Entities
 { 
     public class TokenResponse
     {

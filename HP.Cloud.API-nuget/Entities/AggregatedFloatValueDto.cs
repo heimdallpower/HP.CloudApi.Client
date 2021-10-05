@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HeimdallApi.Entities
+namespace HeimdallPower.Entities
 {
     public class AggregatedFloatValueDto
     {

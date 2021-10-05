@@ -1,25 +1,25 @@
-﻿using Microsoft.IdentityModel.Clients.ActiveDirectory;
-using System;
+﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Clients.ActiveDirectory;
 using Newtonsoft.Json;
 
-namespace DotNetClient.Clients
+namespace HeimdallPower
 {
-    public class HeimdallHttpClient
+    internal class HeimdallHttpClient
     {
-        protected HttpClient HttpClient { get; } = new () { BaseAddress = new Uri(ApiUrl) };
-        private readonly ClientAssertionCertificate _certificate; 
-
-        private const string ApiUrl = "https://api.heimdallcloud.com/api/v1/"; // Heimdall API URL
-        private const string Authority =
-            "https://login.microsoftonline.com/132d3d43-145b-4d30-aaf3-0a47aa7be073"; // Heimdall's Azure tenant
-        private const string Scope = "aac6dec0-4c1b-4565-a825-5bb9401a1547/.default"; // Which scope does this application require? The id here is the Heimdall API's client id
+        protected HttpClient HttpClient { get; } = new() { BaseAddress = new Uri(ApiUrl) };
+        private readonly ClientAssertionCertificate _certificate;
+        private const string ApiUrl = "https://api.heimdallcloud.com/api/v1/";
+        // Heimdall's Azure tenant
+        private const string Authority = "https://login.microsoftonline.com/132d3d43-145b-4d30-aaf3-0a47aa7be073";
+        // Which scope does this application require? The id here is the Heimdall API's client id
+        private const string Scope = "aac6dec0-4c1b-4565-a825-5bb9401a1547/.default";
         private DateTimeOffset _tokenExpiresOn;
+
         public HeimdallHttpClient(string clientId, string pfxCertificatePath, string certificatePassword)
         {
             var certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pfxCertificatePath);
@@ -66,9 +66,11 @@ namespace DotNetClient.Clients
             {
                 AuthenticationContext context = new AuthenticationContext(Authority);
                 AuthenticationResult authenticationResult = await context.AcquireTokenAsync(Scope, _certificate);
-                Console.WriteLine($"New access token retrieved. The token will expire on {authenticationResult.ExpiresOn}\n");
+                Console.WriteLine(
+                    $"New access token retrieved. The token will expire on {authenticationResult.ExpiresOn}\n");
                 _tokenExpiresOn = authenticationResult.ExpiresOn;
-                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken); ;
+                HttpClient.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
             }
         }
     }

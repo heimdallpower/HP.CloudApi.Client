@@ -1,5 +1,5 @@
 ﻿
-namespace HeimdallApi.Enums
+namespace HeimdallPower.Enums
 {
     public enum DLRType
     {

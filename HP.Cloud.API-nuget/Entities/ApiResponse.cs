@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-namespace HeimdallApi.Entities
+namespace HeimdallPower.Entities
 {
     //todo check if we can use either ApiObjectResponse or ApiResponse
     public class ApiResponse<T>

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DotnetNuget\HeimdallApi.csproj" />
+    <ProjectReference Include="..\HP.Cloud.API-nuget\HP.Cloud.API-nuget.csproj" />
   </ItemGroup>
 
 </Project>

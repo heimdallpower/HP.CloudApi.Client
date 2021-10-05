@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HeimdallApi.Entities
+namespace HeimdallPower.Entities
 {
     public class SpanDto<T> where T : class
     {
