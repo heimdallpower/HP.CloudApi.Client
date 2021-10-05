@@ -1,0 +1,1 @@
+A class library that consumes the Heimdall Cloud API distributed as a nuget package.
