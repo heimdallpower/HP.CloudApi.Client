@@ -64,7 +64,7 @@ namespace HeimdallPower
             var url = BuildAggregatedMeasurementsUrl(line, span, from, to, intervalDuration, measurementType,
                 aggregationType);
 
-            var response = await _heimdallClient.Get<AggregatedResponse<AggregatedFloatValueDto>>(url);
+            var response = await _heimdallClient.Get<ApiResponse<List<AggregatedFloatValueDto>>>(url);
 
             return response != null ? response.Data.ToList() : new();
         }
