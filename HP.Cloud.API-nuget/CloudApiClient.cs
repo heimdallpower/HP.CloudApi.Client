@@ -8,6 +8,9 @@ using HeimdallPower.Enums;
 
 namespace HeimdallPower
 {
+    /// <summary>
+    /// A client that lets you consume the Heimdall Cloud API
+    /// </summary>
     public class CloudApiClient
     {
         private readonly HeimdallHttpClient _heimdallClient;
@@ -22,9 +25,12 @@ namespace HeimdallPower
             _heimdallClient = new HeimdallHttpClient(clientId, certificate);
         }
 
+        /// <summary>
+        /// Get a list of line objects. The line object consists of its id, the spans of the line, and the spanphases of each span. The ids of the lines, spans and phases can be used to query the other endpoints.
+        /// </summary>
         public async Task<List<LineDto>> GetLines()
         {
-            var response = await _heimdallClient.Get<LineResponse>("lines");
+            var response = await _heimdallClient.Get<ApiResponse<List<LineDto>>>("lines");
             return response == null ? new List<LineDto>() : response.Data.ToList();
         }
 
@@ -55,7 +61,7 @@ namespace HeimdallPower
         }
 
         /// <summary>
-        /// Get aggregated measurements for a line or span. Uses the most specific optional parameter set (spanPhase > span > line).  
+        /// Get aggregated measurements per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
         /// </summary>
         public async Task<List<AggregatedFloatValueDto>> GetAggregatedMeasurements(LineDto line, SpanDto span,
             DateTime from, DateTime to, string intervalDuration, MeasurementType measurementType,
@@ -77,7 +83,7 @@ namespace HeimdallPower
         }
 
         /// <summary>
-        /// Get icing data for a line or span. Uses the most specific optional parameter set (span > line).  
+        /// Get icing data per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
         /// </summary>
         public async Task<LineDto<IcingDataDto>> GetIcingData(LineDto line, SpanDto span, DateTime from, DateTime to)
         {
@@ -95,10 +101,9 @@ namespace HeimdallPower
         }
 
         /// <summary>
-        /// Get sag and clearances for a line, span, or spanphase. Uses the most specific optional parameter set (spanPhase > span > line).  
+        /// Get sag and clearances per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
         /// </summary>
-        public async Task<List<LineDto<SagAndClearanceDto>>> GetSagAndClearances(LineDto line, SpanDto span,
-            SpanPhaseDto spanPhase, DateTime from, DateTime to)
+        public async Task<List<LineDto<SagAndClearanceDto>>> GetSagAndClearances(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
         {
             var url = BuildSagAndClearanceUrl(line, span, spanPhase, from, to);
             var response = await _heimdallClient.Get<ApiResponse<List<LineDto<SagAndClearanceDto>>>>(url);
