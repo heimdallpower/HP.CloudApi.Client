@@ -11,7 +11,7 @@ using HeimdallPower.ExtensionMethods;
 
 namespace HeimdallPower
 {
-    internal class UrlBuilder
+    internal static class UrlBuilder
     {
         private const string AggregatedMeasurements = "aggregated-measurements";
         private const string IcingData = "icing-data";
@@ -22,56 +22,55 @@ namespace HeimdallPower
 
         private static NameValueCollection GetDateTimeParams(DateTime from, DateTime to)
         {
-            return new()
-            {
-                { "fromDateTime", from.ToString(DateFormat) },
-                { "toDateTime", to.ToString(DateFormat) }
-            };
+            return new NameValueCollection()
+                .AddQueryParam("fromDateTime", from.ToString(DateFormat))
+                .AddQueryParam("toDateTime", to.ToString(DateFormat));
         }        
         
         private static NameValueCollection GetIdentifierParam(LineDto line, SpanDto span, SpanPhaseDto spanPhase)
         {
             var identifierParam = new NameValueCollection();
             if (spanPhase != null)
-                identifierParam["spanPhaseId"] = spanPhase.Id.ToString();
+                identifierParam.AddQueryParam("spanPhaseId", spanPhase.Id.ToString());
             else if (span != null)
-                identifierParam["spanId"] = span.Id.ToString();
+                identifierParam.AddQueryParam("spanId", span.Id.ToString());
             else
                 identifierParam["lineId"] = line.Id.ToString();
+
             return identifierParam;
         }
 
         public static string BuildAggregatedMeasurementsUrl(LineDto line, SpanDto span, DateTime from, DateTime to,
             string intervalDuration, MeasurementType measurementType, AggregationType aggregationType)
         {
-            var queryParams = HttpUtility.ParseQueryString(string.Empty);
-            queryParams.Add(GetDateTimeParams(from, to));
-            queryParams.Add(GetIdentifierParam(line, span, null));
-            queryParams["intervalDuration"] = intervalDuration;
-            queryParams["measurementType"] = measurementType.ToString();
-            queryParams["aggregationType"] = aggregationType.ToString();
+            var queryParams = new NameValueCollection()
+                .AddQueryParam(GetDateTimeParams(from, to))
+                .AddQueryParam(GetIdentifierParam(line, span, null))
+                .AddQueryParam("intervalDuration", intervalDuration)
+                .AddQueryParam("measurementType", measurementType.ToString())
+                .AddQueryParam("aggregationType", aggregationType.ToString());
+
             return GetFullUrl(AggregatedMeasurements, queryParams);
         }
 
         public static string BuildIcingUrl(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
         {
-            var queryParams = HttpUtility.ParseQueryString(string.Empty);
-            queryParams.Add(GetDateTimeParams(from, to));
-            queryParams.Add(GetIdentifierParam(line, span, spanPhase));
+            var queryParams = new NameValueCollection()
+                .AddQueryParam(GetDateTimeParams(from, to))
+                .AddQueryParam(GetIdentifierParam(line, span, spanPhase));
             return GetFullUrl( IcingData, queryParams);
         }
 
         public static string BuildSagAndClearanceUrl(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
         {
-            var queryParams = HttpUtility.ParseQueryString(string.Empty);
-            queryParams.Add(GetDateTimeParams(from, to));
-            queryParams.Add(GetIdentifierParam(line, span, spanPhase));
+            var queryParams = new NameValueCollection()
+                .AddQueryParam(GetDateTimeParams(from, to))
+                .AddQueryParam(GetIdentifierParam(line, span, spanPhase));
             return GetFullUrl(SagAndClearances, queryParams);
         }
 
         private static string GetFullUrl(string endpoint, NameValueCollection queryParams, string apiVersion = V1)
         {
-            var url = $"{apiVersion}/{endpoint}{queryParams.ToQueryString()}";
             return $"{apiVersion}/{endpoint}{queryParams.ToQueryString()}";
         }
 

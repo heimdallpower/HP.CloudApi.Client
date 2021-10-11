@@ -12,5 +12,16 @@ namespace HeimdallPower.ExtensionMethods
             httpValueCollection.Add(nameValueCollection);
             return $"?{httpValueCollection}";
         }
+
+        public static NameValueCollection AddQueryParam(this NameValueCollection nameValueCollection, NameValueCollection queryParam)
+        {
+            nameValueCollection.Add(queryParam);
+            return nameValueCollection;
+        }
+        public static NameValueCollection AddQueryParam(this NameValueCollection nameValueCollection, string key, string value)
+        {
+            nameValueCollection[key] = value;
+            return nameValueCollection;
+        }
     }
 }
