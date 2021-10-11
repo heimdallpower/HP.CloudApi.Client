@@ -30,34 +30,9 @@ namespace HeimdallPower
         /// </summary>
         public async Task<List<LineDto>> GetLines()
         {
-            var response = await _heimdallClient.Get<ApiResponse<List<LineDto>>>("lines");
+            var url = UrlBuilder.GetFullUrl("lines");
+            var response = await _heimdallClient.Get<ApiResponse<List<LineDto>>>(url);
             return response == null ? new List<LineDto>() : response.Data.ToList();
-        }
-
-        private static string GetDateTimeParams(DateTime from, DateTime to)
-        {
-            const string dateFormat = "yyyy-MM-ddThh:mm:ss.fffZ";
-            return $"fromDateTime={from.ToString(dateFormat)}&toDateTime={to.ToString(dateFormat)}";
-        }
-
-        private static string GetIdentifierParam(LineDto line, SpanDto span, SpanPhaseDto spanPhase)
-        {
-            if (spanPhase != null)
-                return $"spanPhaseId={spanPhase.Id}";
-            if (span != null)
-                return $"spanId={span.Id}";
-            return $"lineId={line.Id}";
-        }
-
-        private static string BuildAggregatedMeasurementsUrl(LineDto line, SpanDto span, DateTime from, DateTime to,
-            string intervalDuration, MeasurementType measurementType, AggregationType aggregationType)
-        {
-            return "aggregated-measurements?" +
-                   $"intervalDuration={intervalDuration}&" +
-                   $"measurementType={measurementType}&" +
-                   $"aggregationType={aggregationType}&" +
-                   $"{GetDateTimeParams(from, to)}&" +
-                   $"{GetIdentifierParam(line, span, null)}";
         }
 
         /// <summary>
@@ -67,19 +42,12 @@ namespace HeimdallPower
             DateTime from, DateTime to, string intervalDuration, MeasurementType measurementType,
             AggregationType aggregationType)
         {
-            var url = BuildAggregatedMeasurementsUrl(line, span, from, to, intervalDuration, measurementType,
+            var url = UrlBuilder.BuildAggregatedMeasurementsUrl(line, span, from, to, intervalDuration,
+                measurementType,
                 aggregationType);
-
             var response = await _heimdallClient.Get<ApiResponse<List<AggregatedFloatValueDto>>>(url);
 
             return response != null ? response.Data.ToList() : new();
-        }
-
-        private static string BuildIcingUrl(LineDto line, SpanDto span, DateTime from, DateTime to)
-        {
-            return "icing-data?" +
-                   $"{GetDateTimeParams(from, to)}&" +
-                   $"{GetIdentifierParam(line, span, null)}";
         }
 
         /// <summary>
@@ -93,19 +61,12 @@ namespace HeimdallPower
             return response != null ? response.Data : new();
         }
 
-        private static string BuildSagAndClearanceUrl(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
-        {
-            return "sag-and-clearances?" +
-                   $"{GetDateTimeParams(from, to)}&" +
-                   $"{GetIdentifierParam(line, span, spanPhase)}";
-        }
-
         /// <summary>
         /// Get sag and clearances per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
         /// </summary>
         public async Task<List<LineDto<SagAndClearanceDto>>> GetSagAndClearances(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
         {
-            var url = BuildSagAndClearanceUrl(line, span, spanPhase, from, to);
+            var url = UrlBuilder.BuildSagAndClearanceUrl(line, span, spanPhase, from, to);
             var response = await _heimdallClient.Get<ApiResponse<List<LineDto<SagAndClearanceDto>>>>(url);
 
             return response != null ? response.Data : new();

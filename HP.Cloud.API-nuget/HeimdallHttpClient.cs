@@ -13,7 +13,7 @@ namespace HeimdallPower
     {
         protected HttpClient HttpClient { get; } = new() { BaseAddress = new Uri(ApiUrl) };
         private readonly ClientAssertionCertificate _certificate;
-        private const string ApiUrl = "https://api.heimdallcloud.com/api/v1/";
+        private const string ApiUrl = "https://api.heimdallcloud.com";
         // Heimdall's Azure tenant
         private const string Authority = "https://login.microsoftonline.com/132d3d43-145b-4d30-aaf3-0a47aa7be073";
         // Which scope does this application require? The id here is the Heimdall API's client id
