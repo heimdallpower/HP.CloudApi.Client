@@ -32,8 +32,9 @@ namespace TestClient
             var measurementsSpan = await api.GetAggregatedMeasurements(line, span, from, to, IntervalDuration.EveryHour,
                 MeasurementType.Current, AggregationType.Average);
 
-            var icingLine = await api.GetIcingData(line, null, from, to);
-            var icingSpan = await api.GetIcingData(null, span, from, to);
+            var icingLine = await api.GetIcingData(line, null, null, from, to);
+            var icingSpan = await api.GetIcingData(null, span, null, from, to);
+            var icingSpanPhase = await api.GetIcingData(null, span, spanPhase, from, to);
 
             var sagAndClearancesLine = await api.GetSagAndClearances(line, null, null, from, to);
             var sagAndClearancesSpan = await api.GetSagAndClearances(line, span, null, from, to);

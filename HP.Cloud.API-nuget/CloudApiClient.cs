@@ -85,9 +85,9 @@ namespace HeimdallPower
         /// <summary>
         /// Get icing data per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
         /// </summary>
-        public async Task<LineDto<IcingDataDto>> GetIcingData(LineDto line, SpanDto span, DateTime from, DateTime to)
+        public async Task<LineDto<IcingDataDto>> GetIcingData(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
         {
-            var url = BuildIcingUrl(line, span, from, to);
+            var url = UrlBuilder.BuildIcingUrl(line, span, spanPhase, from, to);
             var response = await _heimdallClient.Get<ApiResponse<LineDto<IcingDataDto>>>(url);
 
             return response != null ? response.Data : new();
