@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using HeimdallPower.Entities;
 using HeimdallPower.Enums;
+using HeimdallPower.ExtensionMethods;
 
 namespace HeimdallPower
 {
@@ -42,6 +43,10 @@ namespace HeimdallPower
             DateTime from, DateTime to, string intervalDuration, MeasurementType measurementType,
             AggregationType aggregationType)
         {
+            if (!intervalDuration.IsValidIso8601Duration())
+            {
+                throw new ArgumentException($"Interval duration '{intervalDuration}' is not a valid ISO 8601 string");
+            }
             var url = UrlBuilder.BuildAggregatedMeasurementsUrl(line, span, from, to, intervalDuration,
                 measurementType,
                 aggregationType);
@@ -68,6 +73,32 @@ namespace HeimdallPower
         {
             var url = UrlBuilder.BuildSagAndClearanceUrl(line, span, spanPhase, from, to);
             var response = await _heimdallClient.Get<ApiResponse<List<LineDto<SagAndClearanceDto>>>>(url);
+
+            return response != null ? response.Data : new();
+        }
+
+        /// <summary>
+        /// Get aggregated dynamic line ratings for a line
+        /// </summary>
+        public async Task<List<DLRDto>> GetAggregatedDlr(LineDto line, DateTime from, DateTime to, DLRType dlrType, string intervalDuration)
+        {
+            if (!intervalDuration.IsValidIso8601Duration())
+            {
+                throw new ArgumentException($"Interval duration '{intervalDuration}' is not a valid ISO 8601 string");
+            }
+            var url = UrlBuilder.BuildAggregatedDlrUrl(line, from, to, dlrType, intervalDuration);
+            var response = await _heimdallClient.Get<ApiResponse<List<DLRDto>>>(url);
+
+            return response != null ? response.Data : new();
+        }
+
+        /// <summary>
+        /// Get hourly DLR forecasts (Cigre) up to 48 hours ahead in time
+        /// </summary>
+        public async Task<List<LineAggregatedDLRForecastDto>> GetAggregatedDlrForecast(LineDto line, int hoursAhead)
+        {
+            var url = UrlBuilder.BuildAggregatedDlrForecastUrl(line, hoursAhead);
+            var response = await _heimdallClient.Get<ApiResponse<List<LineAggregatedDLRForecastDto>>>(url);
 
             return response != null ? response.Data : new();
         }

@@ -39,6 +39,9 @@ namespace TestClient
             var sagAndClearancesLine = await api.GetSagAndClearances(line, null, null, from, to);
             var sagAndClearancesSpan = await api.GetSagAndClearances(line, span, null, from, to);
             var sagAndClearancesSpanPhase = await api.GetSagAndClearances(line, null, spanPhase, from, to);
+
+            var aggregatedDLR = await api.GetAggregatedDlr(line, from, to, DLRType.HP, "P1D");
+            var forecastDLR = await api.GetAggregatedDlrForecast(line, 24);
         }
     }
 }

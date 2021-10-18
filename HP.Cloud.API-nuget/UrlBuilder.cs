@@ -14,10 +14,14 @@ namespace HeimdallPower
     internal static class UrlBuilder
     {
         private const string AggregatedMeasurements = "aggregated-measurements";
+        private const string AggregatedDLR = "dlr/aggregated-dlr";
+        private const string AggregatedDLRForecast = "dlr/aggregated-dlr-forecast";
         private const string IcingData = "icing-data";
         private const string SagAndClearances = "sag-and-clearances";
+
         private const string V1 = "api/v1";
         private const string Beta = "api/beta";
+
         private const string DateFormat = "o";
 
         private static NameValueCollection GetDateTimeParams(DateTime from, DateTime to)
@@ -40,13 +44,20 @@ namespace HeimdallPower
             return identifierParam;
         }
 
+        private static NameValueCollection GetIntervalDurationParam(string intervalDuration)
+        {
+            var durationParam = new NameValueCollection();
+            durationParam["intervalDuration"] = intervalDuration;
+            return durationParam;
+        }
+
         public static string BuildAggregatedMeasurementsUrl(LineDto line, SpanDto span, DateTime from, DateTime to,
             string intervalDuration, MeasurementType measurementType, AggregationType aggregationType)
         {
             var queryParams = new NameValueCollection()
                 .AddQueryParam(GetDateTimeParams(from, to))
                 .AddQueryParam(GetIdentifierParam(line, span, null))
-                .AddQueryParam("intervalDuration", intervalDuration)
+                .AddQueryParam(GetIntervalDurationParam(intervalDuration))
                 .AddQueryParam("measurementType", measurementType.ToString())
                 .AddQueryParam("aggregationType", aggregationType.ToString());
 
@@ -68,6 +79,25 @@ namespace HeimdallPower
                 .AddQueryParam(GetIdentifierParam(line, span, spanPhase));
             return GetFullUrl(SagAndClearances, queryParams);
         }
+
+        public static string BuildAggregatedDlrUrl(LineDto line, DateTime from, DateTime to, DLRType dlrType, string intervalDuration)
+        {
+            var queryParams = new NameValueCollection()
+                .AddQueryParam(GetDateTimeParams(from, to))
+                .AddQueryParam(GetIdentifierParam(line, null, null))
+                .AddQueryParam(GetIntervalDurationParam(intervalDuration))
+                .AddQueryParam("dlrType", dlrType.ToString());
+            return GetFullUrl(AggregatedDLR, queryParams);
+        }        
+        
+        public static string BuildAggregatedDlrForecastUrl(LineDto line, int hoursAhead)
+        {
+            var queryParams = new NameValueCollection()
+                .AddQueryParam(GetIdentifierParam(line, null, null))
+                .AddQueryParam("hoursAhead", hoursAhead.ToString());
+            return GetFullUrl(AggregatedDLRForecast, queryParams);
+        }
+        
 
         private static string GetFullUrl(string endpoint, NameValueCollection queryParams, string apiVersion = V1)
         {
