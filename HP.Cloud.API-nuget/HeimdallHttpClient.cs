@@ -11,16 +11,26 @@ namespace HeimdallPower
 {
     internal class HeimdallHttpClient
     {
-        protected HttpClient HttpClient { get; } = new() { BaseAddress = new Uri(ApiUrl) };
+        protected HttpClient HttpClient { get; }
         private readonly ClientAssertionCertificate _certificate;
-        private const string ApiUrl = "https://api.heimdallcloud.com";
-        // Heimdall's Azure tenant
+        private readonly string _scope;
+
         private const string Authority = "https://login.microsoftonline.com/132d3d43-145b-4d30-aaf3-0a47aa7be073";
-        // Which scope does this application require? The id here is the Heimdall API's client id
-        private const string Scope = "aac6dec0-4c1b-4565-a825-5bb9401a1547/.default";
+        private const string ProdApiUrl = "https://api.heimdallcloud.com";
+        private const string DevApiUrl = "https://api.heimdallcloud-dev.com";
+        private const string ProdScope = "aac6dec0-4c1b-4565-a825-5bb9401a1547/.default";
+        private const string DevScope = "6b9ba5c0-4a21-4263-bbf5-8c4e30c0ee1b/.default";
+
         private DateTimeOffset _tokenExpiresOn;
 
-        public HeimdallHttpClient(string clientId, string pfxCertificatePath, string certificatePassword)
+        public HeimdallHttpClient(bool useDeveloperApi)
+        {
+            _scope = useDeveloperApi ? DevScope : ProdScope;
+            var apiUrl = useDeveloperApi ? DevApiUrl : ProdApiUrl;
+            HttpClient = new() { BaseAddress = new Uri(apiUrl) };
+        }
+
+        public HeimdallHttpClient(string clientId, bool useDeveloperApi, string pfxCertificatePath, string certificatePassword) : this(useDeveloperApi)
         {
             var certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pfxCertificatePath);
             var certfile = File.OpenRead(certPath);
@@ -35,9 +45,9 @@ namespace HeimdallPower
             _certificate = new ClientAssertionCertificate(clientId, x509Certificate2);
         }
 
-        public HeimdallHttpClient(string clientId, X509Certificate2 certificate)
+        public HeimdallHttpClient(string clientId, bool useDeveloperApi, X509Certificate2 certificate): this(useDeveloperApi)
         {
-            _certificate = new ClientAssertionCertificate(clientId, certificate);
+            _certificate = new ClientAssertionCertificate(clientId, certificate);            
         }
 
         public async Task<T> Get<T>(string url)
@@ -65,7 +75,7 @@ namespace HeimdallPower
             if (DateTime.Now > _tokenExpiresOn)
             {
                 AuthenticationContext context = new AuthenticationContext(Authority);
-                AuthenticationResult authenticationResult = await context.AcquireTokenAsync(Scope, _certificate);
+                AuthenticationResult authenticationResult = await context.AcquireTokenAsync(_scope, _certificate);
                 _tokenExpiresOn = authenticationResult.ExpiresOn;
                 HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
             }

@@ -16,14 +16,14 @@ namespace HeimdallPower
     {
         private readonly HeimdallHttpClient _heimdallClient;
 
-        public CloudApiClient(string clientId, string certificatePath, string certificatePassword)
+        public CloudApiClient(string clientId, bool useDeveloperApi, string certificatePath, string certificatePassword)
         {
-            _heimdallClient = new HeimdallHttpClient(clientId, certificatePath, certificatePassword);
+            _heimdallClient = new HeimdallHttpClient(clientId, useDeveloperApi, certificatePath, certificatePassword);
         }
 
-        public CloudApiClient(string clientId, X509Certificate2 certificate)
+        public CloudApiClient(string clientId, bool useDeveloperApi, X509Certificate2 certificate)
         {
-            _heimdallClient = new HeimdallHttpClient(clientId, certificate);
+            _heimdallClient = new HeimdallHttpClient(clientId, useDeveloperApi, certificate);
         }
 
         /// <summary>

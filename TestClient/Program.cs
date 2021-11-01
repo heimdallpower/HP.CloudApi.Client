@@ -18,10 +18,11 @@ namespace TestClient
         private static async Task Main()
         {
             Console.WriteLine("Hello World!");
-            var api = new CloudApiClient(ClientId, PfxCertificatePath, CertificatePassword);
+            var useDeveloperApi = false;
+            var nameOfLineWithData = useDeveloperApi ? "Heimdall Power Line" : "Strøm Trafo - Fv";
+            var api = new CloudApiClient(ClientId, useDeveloperApi, PfxCertificatePath, CertificatePassword);
             var lines = await api.GetLines();
-            //var line = lines.FirstOrDefault(line => line.Name.Equals("Strøm Trafo - Fv"));
-            var line = lines.FirstOrDefault(line => line.Name.Equals("Finnfjordbotn - Silsand"));
+            var line = lines.FirstOrDefault(line => line.Name.Equals(nameOfLineWithData));
             var span = line.Spans.First();
             var spanPhase = span.SpanPhases.ToList().First();
             var from = DateTime.Now.AddDays(-7);
