@@ -8,7 +8,7 @@
     <PackageId>CloudApiClient</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>A client for the Heimdall Cloud API</Description>
-    <Version>1.0.0-beta</Version>
+    <Version>1.0.0-beta.2</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
