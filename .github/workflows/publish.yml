@@ -28,7 +28,7 @@ jobs:
           PACKAGE_NAME: HeimdallPower.CloudApiClient
           
           # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
-          VERSION_STATIC: 0.0.1
+          # VERSION_STATIC: 1.0.0
           
           # API key to authenticate with NuGet server
           NUGET_KEY: ${{secrets.NUGET_API_KEY}}
