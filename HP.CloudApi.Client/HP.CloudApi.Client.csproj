@@ -8,8 +8,10 @@
     <PackageId>HeimdallPower.CloudApi.Client</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>A client for the Heimdall Cloud API</Description>
-    <Version>1.0.0</Version>
+    <Version>1.0.0-test</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryUrl>https://github.com/heimdallpower/HP.CloudApi.Client</RepositoryUrl>
+    <ProjectWebsite>https://heimdallbrain.atlassian.net/wiki/spaces/HCUG/pages/1444347938/Heimdall+Cloud+API</ProjectWebsite>
   </PropertyGroup>
 
   <ItemGroup>
