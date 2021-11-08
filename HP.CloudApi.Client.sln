@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HP.Cloud.API-nuget", "HP.Cloud.API-nuget\HP.Cloud.API-nuget.csproj", "{6C1A2462-E86F-4C7B-AED1-5C7658D0084A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HP.CloudApi.Client", "HP.CloudApi.Client\HP.CloudApi.Client.csproj", "{6C1A2462-E86F-4C7B-AED1-5C7658D0084A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestClient", "TestClient\TestClient.csproj", "{BD8765C5-6C02-4FD2-9043-9CEEF6BF543F}"
 EndProject

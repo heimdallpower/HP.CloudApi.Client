@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.101
-      - run: dotnet nuget add source https://github.com/heimdallpower/HP.CloudApi.Client
+      #- run: dotnet nuget add source https://github.com/heimdallpower/HP.CloudApi.Client
       - run: dotnet build
 
       # Publish
@@ -23,7 +23,7 @@ jobs:
         uses: rohith/publish-nuget@v2
         with:
           # Filepath of the project to be packaged, relative to root of repository
-          PROJECT_FILE_PATH: HP.Cloud.API-nuget/HP.Cloud.API-nuget.csproj
+          PROJECT_FILE_PATH: HP.CloudApi.Client/HP.CloudApi.Client.csproj
           
           # NuGet package id, used for version detection & defaults to project name
           PACKAGE_NAME: HeimdallPower.CloudApi.Client

@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HP.Cloud.API-nuget\HP.Cloud.API-nuget.csproj" />
+    <ProjectReference Include="..\HP.CloudApi.Client\HP.CloudApi.Client.csproj" />
   </ItemGroup>
 
 </Project>
