@@ -5,7 +5,7 @@
     <LangVersion>9</LangVersion>
     <Company>Heimdall Power</Company>
     <Authors>Heimdall Power</Authors>
-    <PackageId>CloudApiClient</PackageId>
+    <PackageId>HeimdallPower.CloudApi.Client</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>A client for the Heimdall Cloud API</Description>
     <Version>1.0.0-beta.2</Version>

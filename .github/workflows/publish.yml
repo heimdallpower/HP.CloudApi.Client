@@ -14,7 +14,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.101
-      - run: dotnet nuget add source https://github.com/heimdallpower/HP.CloudApi.Client
+      #- run: dotnet nuget add source https://github.com/heimdallpower/HP.CloudApi.Client
       - run: dotnet build
 
       # Publish
