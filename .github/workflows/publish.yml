@@ -14,6 +14,7 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 5.0.101
+      - run: dotnet nuget add source https://github.com/heimdallpower/HP.CloudApi.Client
       - run: dotnet build
 
       # Publish
@@ -25,7 +26,7 @@ jobs:
           PROJECT_FILE_PATH: HP.Cloud.API-nuget/HP.Cloud.API-nuget.csproj
           
           # NuGet package id, used for version detection & defaults to project name
-          PACKAGE_NAME: HeimdallPower.CloudApiClient
+          PACKAGE_NAME: HeimdallPower.CloudApi.Client
           
           # Useful with external providers like Nerdbank.GitVersioning, ignores VERSION_FILE_PATH & VERSION_REGEX
           # VERSION_STATIC: 1.0.0
