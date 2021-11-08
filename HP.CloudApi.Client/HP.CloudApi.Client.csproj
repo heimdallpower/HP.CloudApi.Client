@@ -8,11 +8,12 @@
     <PackageId>HeimdallPower.CloudApi.Client</PackageId>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>A client for the Heimdall Cloud API</Description>
-    <Version>1.0.0-test2</Version>
+    <Version>1.0.0-test3</Version>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/heimdallpower/HP.CloudApi.Client</RepositoryUrl>
     <ProjectWebsite>https://heimdallbrain.atlassian.net/wiki/spaces/HCUG/pages/1444347938/Heimdall+Cloud+API</ProjectWebsite>
     <Website>https://heimdallbrain.atlassian.net/wiki/spaces/HCUG/pages/1444347938/Heimdall+Cloud+API</Website>
+    <PackageProjectUrl>https://heimdallbrain.atlassian.net/wiki/spaces/HCUG/pages/1444347938/Heimdall+Cloud+API</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
