@@ -10,6 +10,7 @@ namespace HeimdallPower.Entities
     }
     public class SpanPhaseDto
     {
+        public string CustomPhaseIdentifier { get; set; }
         public Guid Id { get; set; }
     }
 }
