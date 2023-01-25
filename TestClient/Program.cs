@@ -4,45 +4,42 @@ using System.Threading.Tasks;
 using HeimdallPower;
 using HeimdallPower.Enums;
 
-namespace TestClient
-{
-    class Program
-    {
-        private const string ClientId = "3d7bc9e8-0602-4285-b53d-c5e3db18785b";
+// Configuration setup
+var clientId = "insert-your-client-id-here";
+var clientSecret = "insert-your-client-secret-here";
+var useDeveloperApi = true;
+var lineName = useDeveloperApi ? "Heimdall Power Line" : "Strøm Trafo - Fv";
 
-        private const string PfxCertificatePath =
-            @"C:\Users\even.skari\Code\Heimdall\HP.Cloud.API-clients\DotNetClient\DotNetClient\c.pfx";
+Console.WriteLine("Initiating cloud API test client");
 
-        private const string CertificatePassword = "";
+// Instantiate Cloud API Client
+var api = new CloudApiClient(clientId, clientSecret, useDeveloperApi);
 
-        private static async Task Main()
-        {
-            Console.WriteLine("Hello World!");
-            var useDeveloperApi = false;
-            var nameOfLineWithData = useDeveloperApi ? "Heimdall Power Line" : "Strøm Trafo - Fv";
-            var api = new CloudApiClient(ClientId, useDeveloperApi, PfxCertificatePath, CertificatePassword);
-            var lines = await api.GetLines();
-            var line = lines.FirstOrDefault(line => line.Name.Equals(nameOfLineWithData));
-            var span = line.Spans.First();
-            var spanPhase = span.SpanPhases.ToList().First();
-            var from = DateTime.Now.AddDays(-7);
-            var to = DateTime.Now;
+// Fetch Lines data
+var lines = await api.GetLines();
+var line = lines.FirstOrDefault(line => line.Name.Equals(lineName));
+var span = line.Spans.First();
+var spanPhase = span.SpanPhases.ToList().First();
+var from = DateTime.Now.AddDays(-7);
+var to = DateTime.Now;
 
-            var measurementsLine = await api.GetAggregatedMeasurements(line, null, from, to, IntervalDuration.EveryHour,
-                MeasurementType.Current, AggregationType.Average);
-            var measurementsSpan = await api.GetAggregatedMeasurements(line, span, from, to, IntervalDuration.EveryHour,
-                MeasurementType.Current, AggregationType.Average);
+// Fetch Aggregated Measurements data
+var measurementsLine = await api.GetAggregatedMeasurements(line, null, from, to, IntervalDuration.EveryHour,
+    MeasurementType.Current, AggregationType.Average);
+var measurementsSpan = await api.GetAggregatedMeasurements(line, span, from, to, IntervalDuration.EveryHour,
+    MeasurementType.Current, AggregationType.Average);
 
-            var icingLine = await api.GetIcingData(line, null, null, from, to);
-            var icingSpan = await api.GetIcingData(null, span, null, from, to);
-            var icingSpanPhase = await api.GetIcingData(null, span, spanPhase, from, to);
+// Fetch Icing data
+var icingLine = await api.GetIcingData(line, null, null, from, to);
+var icingSpan = await api.GetIcingData(null, span, null, from, to);
+var icingSpanPhase = await api.GetIcingData(null, span, spanPhase, from, to);
 
-            var sagAndClearancesLine = await api.GetSagAndClearances(line, null, null, from, to);
-            var sagAndClearancesSpan = await api.GetSagAndClearances(line, span, null, from, to);
-            var sagAndClearancesSpanPhase = await api.GetSagAndClearances(line, null, spanPhase, from, to);
 
-            var aggregatedDLR = await api.GetAggregatedDlr(line, from, to, DLRType.HP, "P1D");
-            var forecastDLR = await api.GetAggregatedDlrForecast(line, 24);
-        }
-    }
-}
+// Fetch Sag and Clearances data
+var sagAndClearancesLine = await api.GetSagAndClearances(line, null, null, from, to);
+var sagAndClearancesSpan = await api.GetSagAndClearances(line, span, null, from, to);
+var sagAndClearancesSpanPhase = await api.GetSagAndClearances(line, null, spanPhase, from, to);
+
+// Fetch DLR data
+var aggregatedDLR = await api.GetAggregatedDlr(line, from, to, DLRType.HP, "P1D");
+var forecastDLR = await api.GetAggregatedDlrForecast(line, 24);
