@@ -73,7 +73,6 @@ namespace HeimdallPower
             {
                 AuthenticationResult authenticationResult = await MsalClient.AcquireTokenForClient(new string[] { _scope }).ExecuteAsync();
                 _tokenExpiresOn = authenticationResult.ExpiresOn;
-                Console.WriteLine(authenticationResult.AccessToken);
                 HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
             }
         }
