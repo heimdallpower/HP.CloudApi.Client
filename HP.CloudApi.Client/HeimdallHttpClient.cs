@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Clients.ActiveDirectory;
+using Microsoft.Identity.Client;
 using Newtonsoft.Json;
 
 namespace HeimdallPower
@@ -12,42 +12,39 @@ namespace HeimdallPower
     internal class HeimdallHttpClient
     {
         protected HttpClient HttpClient { get; }
-        private readonly ClientAssertionCertificate _certificate;
+        private readonly IConfidentialClientApplication MsalClient;
         private readonly string _scope;
+        private readonly string _instance;
+        private readonly string _domain;
+        private readonly string _authority;
 
-        private const string Authority = "https://login.microsoftonline.com/132d3d43-145b-4d30-aaf3-0a47aa7be073";
         private const string ProdApiUrl = "https://api.heimdallcloud.com";
         private const string DevApiUrl = "https://api.heimdallcloud-dev.com";
-        private const string ProdScope = "aac6dec0-4c1b-4565-a825-5bb9401a1547/.default";
-        private const string DevScope = "6b9ba5c0-4a21-4263-bbf5-8c4e30c0ee1b/.default";
+
+        private const string Policy = "B2C_1A_CLIENTCREDENTIALSFLOW";
+        private const string ProdInstance = "https://hpadb2cprod.b2clogin.com";
+        private const string DevInstance = "https://hpadb2cdev.b2clogin.com";
+        private const string ProdDomain = "hpadb2cprod.onmicrosoft.com";
+        private const string DevDomain = "hpadb2cdev.onmicrosoft.com";
+        private const string ProdScope = $"https://{ProdDomain}/dc5758ae-4eea-416e-9e61-812914d9a49a/.default";
+        private const string DevScope = $"https://{DevDomain}/f2fd8894-ae2e-4965-8318-e6c6781b5b80/.default";
+        private const string ProdAuthority = $"{ProdInstance}/tfp/{ProdDomain}/{Policy}";
+        private const string DevAuthority = $"{DevInstance}/tfp/{DevDomain}/{Policy}";
 
         private DateTimeOffset _tokenExpiresOn;
 
-        public HeimdallHttpClient(bool useDeveloperApi)
+        public HeimdallHttpClient(string clientId, string clientSecret, bool useDeveloperApi)
         {
             _scope = useDeveloperApi ? DevScope : ProdScope;
+            _instance = useDeveloperApi ? DevInstance: ProdInstance;
+            _domain = useDeveloperApi ? DevDomain : ProdDomain;
+            _authority = useDeveloperApi ? DevAuthority : ProdAuthority;
             var apiUrl = useDeveloperApi ? DevApiUrl : ProdApiUrl;
             HttpClient = new() { BaseAddress = new Uri(apiUrl) };
-        }
-
-        public HeimdallHttpClient(string clientId, bool useDeveloperApi, string pfxCertificatePath, string certificatePassword) : this(useDeveloperApi)
-        {
-            var certPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pfxCertificatePath);
-            var certfile = File.OpenRead(certPath);
-            var certificateBytes = new byte[certfile.Length];
-            certfile.Read(certificateBytes, 0, (int)certfile.Length);
-            var x509Certificate2 = new X509Certificate2(
-                certificateBytes,
-                certificatePassword,
-                X509KeyStorageFlags.Exportable |
-                X509KeyStorageFlags.MachineKeySet |
-                X509KeyStorageFlags.PersistKeySet);
-            _certificate = new ClientAssertionCertificate(clientId, x509Certificate2);
-        }
-
-        public HeimdallHttpClient(string clientId, bool useDeveloperApi, X509Certificate2 certificate): this(useDeveloperApi)
-        {
-            _certificate = new ClientAssertionCertificate(clientId, certificate);            
+            MsalClient = ConfidentialClientApplicationBuilder.Create(clientId)
+                .WithClientSecret(clientSecret)
+                .WithAuthority(_authority)
+                .Build();
         }
 
         public async Task<T> Get<T>(string url)
@@ -74,9 +71,9 @@ namespace HeimdallPower
         {
             if (DateTime.Now > _tokenExpiresOn)
             {
-                AuthenticationContext context = new AuthenticationContext(Authority);
-                AuthenticationResult authenticationResult = await context.AcquireTokenAsync(_scope, _certificate);
+                AuthenticationResult authenticationResult = await MsalClient.AcquireTokenForClient(new string[] { _scope }).ExecuteAsync();
                 _tokenExpiresOn = authenticationResult.ExpiresOn;
+                Console.WriteLine(authenticationResult.AccessToken);
                 HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
             }
         }
