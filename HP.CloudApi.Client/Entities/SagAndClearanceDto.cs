@@ -6,6 +6,6 @@ namespace HeimdallPower.Entities
     {
         public DateTime Timestamp { get; set; }
         public double Sag { get; set; }
-        public double Clearance { get; set; }
+        public double? Clearance { get; set; }
     }
 }
