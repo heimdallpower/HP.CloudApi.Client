@@ -5,6 +5,8 @@ namespace HeimdallPower.Enums
     {
         IEEE,
         Cigre,
-        HP
+        HP,
+        TransmissionChainRating,
+        HPVirtualDLR
     }
 }
