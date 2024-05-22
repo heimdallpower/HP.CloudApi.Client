@@ -3,10 +3,11 @@ on:
   push:
     branches:
       - master # Default release branch
+      - pr/* # Pull requests
 jobs:
   publish:
     name: build, pack & publish
-    runs-on: windows-2022
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -14,12 +15,15 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 7.0.x
-      
-      
-      - run: dotnet build --configuration Release
+
+      - name: Build the project
+        run: dotnet build --configuration Release
 
       # Publish
       - name: Publish the package to nuget.org
-        run: dotnet nuget push */bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+        run: |
+          for file in */bin/Release/*.nupkg; do
+            dotnet nuget push "$file" -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+          done
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
