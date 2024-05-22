@@ -23,7 +23,7 @@ jobs:
       - name: Publish the package to nuget.org
         run: |
           for file in */bin/Release/*.nupkg; do
-            dotnet nuget push "$file" -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+            dotnet nuget push "$file" -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json --skip-duplicate
           done
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
