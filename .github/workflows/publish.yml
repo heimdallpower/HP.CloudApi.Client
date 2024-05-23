@@ -1,12 +1,14 @@
-name: publish to nuget
+name: Build and Publish to NuGet
+
 on:
   push:
     branches:
-      - master # Default release branch
+      - '**' # Run on push to any branch
+
 jobs:
-  publish:
-    name: build, pack & publish
-    runs-on: windows-2022
+  build:
+    name: Build the project
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
@@ -14,12 +16,42 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 7.0.x
-      
-      
-      - run: dotnet build --configuration Release
 
-      # Publish
+      - name: Build the project
+        run: dotnet build --configuration Release
+
+      - name: Save build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build_artifacts
+          path: 'HP.CloudApi.Client/bin/Release/*.nupkg'
+
+  publish:
+    name: Publish to NuGet
+    runs-on: ubuntu-latest
+    needs: build
+    if: ${{ github.ref_name == 'master' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build_artifacts
+          path: build_artifacts
+
+      - name: List artifact files
+        run: ls -R build_artifacts
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 7.0.x
+
       - name: Publish the package to nuget.org
-        run: dotnet nuget push */bin/Release/*.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
+        run: |
+          for file in build_artifacts/*.nupkg; do
+            dotnet nuget push "$file" -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json --skip-duplicate
+          done
         env:
           NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
