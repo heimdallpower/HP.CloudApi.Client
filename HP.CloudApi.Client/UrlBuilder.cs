@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Threading.Tasks;
-using System.Web;
 using HeimdallPower.Entities;
 using HeimdallPower.Enums;
 using HeimdallPower.ExtensionMethods;
@@ -29,8 +24,8 @@ namespace HeimdallPower
             return new NameValueCollection()
                 .AddQueryParam("fromDateTime", from.ToString(DateFormat))
                 .AddQueryParam("toDateTime", to.ToString(DateFormat));
-        }        
-        
+        }
+
         private static NameValueCollection GetIdentifierParam(LineDto line, SpanDto span, SpanPhaseDto spanPhase)
         {
             var identifierParam = new NameValueCollection();
@@ -69,7 +64,7 @@ namespace HeimdallPower
             var queryParams = new NameValueCollection()
                 .AddQueryParam(GetDateTimeParams(from, to))
                 .AddQueryParam(GetIdentifierParam(line, span, spanPhase));
-            return GetFullUrl( IcingData, queryParams);
+            return GetFullUrl(IcingData, queryParams);
         }
 
         public static string BuildSagAndClearanceUrl(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
@@ -88,8 +83,8 @@ namespace HeimdallPower
                 .AddQueryParam(GetIntervalDurationParam(intervalDuration))
                 .AddQueryParam("dlrType", dlrType.ToString());
             return GetFullUrl(AggregatedDLR, queryParams);
-        }        
-        
+        }
+
         public static string BuildAggregatedDlrForecastUrl(LineDto line, int hoursAhead)
         {
             var queryParams = new NameValueCollection()
@@ -97,7 +92,7 @@ namespace HeimdallPower
                 .AddQueryParam("hoursAhead", hoursAhead.ToString());
             return GetFullUrl(AggregatedDLRForecast, queryParams);
         }
-        
+
 
         private static string GetFullUrl(string endpoint, NameValueCollection queryParams, string apiVersion = V1)
         {
