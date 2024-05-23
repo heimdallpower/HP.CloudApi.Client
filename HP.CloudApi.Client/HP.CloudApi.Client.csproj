@@ -12,6 +12,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <RepositoryUrl>https://github.com/heimdallpower/HP.CloudApi.Client</RepositoryUrl>
     <PackageProjectUrl>https://heimdallbrain.atlassian.net/wiki/spaces/HCUG/pages/1444347938/Heimdall+Cloud+API</PackageProjectUrl>
+	<RootNamespace>HeimdallPower</RootNamespace>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
