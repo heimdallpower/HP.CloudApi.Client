@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
 using Newtonsoft.Json;
@@ -36,7 +34,7 @@ namespace HeimdallPower
         public HeimdallHttpClient(string clientId, string clientSecret, bool useDeveloperApi)
         {
             _scope = useDeveloperApi ? DevScope : ProdScope;
-            _instance = useDeveloperApi ? DevInstance: ProdInstance;
+            _instance = useDeveloperApi ? DevInstance : ProdInstance;
             _domain = useDeveloperApi ? DevDomain : ProdDomain;
             _authority = useDeveloperApi ? DevAuthority : ProdAuthority;
             var apiUrl = useDeveloperApi ? DevApiUrl : ProdApiUrl;

@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
-namespace HeimdallPower.Entities
+﻿namespace HeimdallPower.Entities
 {
-    public class ApiResponse<T> where T: class
+    public class ApiResponse<T> where T : class
     {
         public T Data;
         public string Message;
