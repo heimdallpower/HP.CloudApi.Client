@@ -7,6 +7,7 @@ namespace HeimdallPower.Enums
         Cigre,
         HP,
         TransmissionChainRating,
-        HPVirtualDLR
+        HPVirtualDLR,
+        HeimdallDLR
     }
 }
