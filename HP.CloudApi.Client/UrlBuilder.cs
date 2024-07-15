@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Data;
 using HeimdallPower.Entities;
 using HeimdallPower.Enums;
 using HeimdallPower.ExtensionMethods;
@@ -85,11 +86,12 @@ namespace HeimdallPower
             return GetFullUrl(AggregatedDLR, queryParams);
         }
 
-        public static string BuildAggregatedDlrForecastUrl(LineDto line, int hoursAhead)
+        public static string BuildAggregatedDlrForecastUrl(LineDto line, int hoursAhead, DLRType? dlrType)
         {
             var queryParams = new NameValueCollection()
                 .AddQueryParam(GetIdentifierParam(line, null, null))
-                .AddQueryParam("hoursAhead", hoursAhead.ToString());
+                .AddQueryParam("hoursAhead", hoursAhead.ToString())
+                .AddQueryParam("dlrType", dlrType.HasValue ? dlrType.ToString() : DLRType.Cigre.ToString());
             return GetFullUrl(AggregatedDLRForecast, queryParams);
         }
 
