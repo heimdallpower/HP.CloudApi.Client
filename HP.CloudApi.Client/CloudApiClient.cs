@@ -89,9 +89,9 @@ namespace HeimdallPower
         /// <summary>
         /// Get hourly DLR forecasts (Cigre) up to 48 hours ahead in time
         /// </summary>
-        public async Task<List<LineAggregatedDLRForecastDto>> GetAggregatedDlrForecast(LineDto line, int hoursAhead)
+        public async Task<List<LineAggregatedDLRForecastDto>> GetAggregatedDlrForecast(LineDto line, int hoursAhead, DLRType? dlrType = null)
         {
-            var url = UrlBuilder.BuildAggregatedDlrForecastUrl(line, hoursAhead);
+            var url = UrlBuilder.BuildAggregatedDlrForecastUrl(line, hoursAhead, dlrType);
             var response = await _heimdallClient.Get<ApiResponse<List<LineAggregatedDLRForecastDto>>>(url);
 
             return response != null ? response.Data : new();
