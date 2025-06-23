@@ -33,23 +33,26 @@ namespace HeimdallPower
         /// <summary>
         /// Get aggregated measurements per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
         /// </summary>
-        public async Task<List<AggregatedFloatValueDto>> GetAggregatedMeasurements(LineDto line, SpanDto span,
-            DateTime from, DateTime to, string intervalDuration, MeasurementType measurementType,
-            AggregationType aggregationType)
-        {
-            if (!intervalDuration.IsValidIso8601Duration())
-            {
-                throw new ArgumentException($"Interval duration '{intervalDuration}' is not a valid ISO 8601 string");
-            }
-            var url = UrlBuilder.BuildAggregatedMeasurementsUrl(line, span, from, to, intervalDuration,
-                measurementType,
-                aggregationType);
-            var response = await _heimdallClient.Get<ApiResponse<List<AggregatedFloatValueDto>>>(url);
+        public async Task<ConductorTemperatureDto> GetAggregatedConductorTemperature(LineDto line)
+        { 
+            var url = UrlBuilder.BuildAggregatedConductorTemperatureUrl(line, "metric");
+            var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url);
 
-            return response != null ? response.Data.ToList() : new();
+            return response != null ? response.Data : new();
         }
 
         /// <summary>
+        /// Get aggregated measurements per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
+        /// </summary>
+        public async Task<CurrentDto> GetAggregatedCurrent(LineDto line)
+        {
+            var url = UrlBuilder.BuildLatestCurrentsUrl(line);
+            var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
+
+            return response != null ? response.Data : new();
+        }
+
+        /*/// <summary>
         /// Get icing data per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
         /// </summary>
         public async Task<LineDto<IcingDataDto>> GetIcingData(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
@@ -69,19 +72,15 @@ namespace HeimdallPower
             var response = await _heimdallClient.Get<ApiResponse<List<LineDto<SagAndClearanceDto>>>>(url);
 
             return response != null ? response.Data : new();
-        }
+        }*/
 
         /// <summary>
         /// Get aggregated dynamic line ratings for a line
         /// </summary>
-        public async Task<List<DLRDto>> GetAggregatedDlr(LineDto line, DateTime from, DateTime to, DLRType dlrType, string intervalDuration)
+        public async Task<DLRDto> GetAggregatedDlr(LineDto line, DLRType dlrType)
         {
-            if (!intervalDuration.IsValidIso8601Duration())
-            {
-                throw new ArgumentException($"Interval duration '{intervalDuration}' is not a valid ISO 8601 string");
-            }
-            var url = UrlBuilder.BuildAggregatedDlrUrl(line, from, to, dlrType, intervalDuration);
-            var response = await _heimdallClient.Get<ApiResponse<List<DLRDto>>>(url);
+            var url = UrlBuilder.BuildAggregatedDlrUrl(line, dlrType);
+            var response = await _heimdallClient.Get<ApiResponse<DLRDto>>(url);
 
             return response != null ? response.Data : new();
         }

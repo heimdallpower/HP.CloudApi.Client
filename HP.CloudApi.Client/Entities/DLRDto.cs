@@ -1,15 +1,17 @@
 ﻿using System;
+using Newtonsoft.Json;
 
-namespace HeimdallPower.Entities
+namespace HeimdallPower.Entities;
+
+public class DLRDto
 {
-    public class DLRDto
-    {
-        private double _ampacity;
-        public DateTime IntervalStartTime { get; set; }
-        public double Ampacity
-        {
-            get => _ampacity;
-            set => _ampacity = Math.Round(value);
-        }
-    }
+    public string Unit {  get; set; }
+    public DLR Dlr { get; set; }
+}
+
+public class DLR
+{
+    public DateTime Timestamp { get; set; }
+    [JsonProperty("min_amapacity")]
+    public double MinAmpacity { get; set; }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Specialized;
 using System.Data;
+using System.Net;
 using HeimdallPower.Entities;
 using HeimdallPower.Enums;
 using HeimdallPower.ExtensionMethods;
@@ -9,14 +10,14 @@ namespace HeimdallPower
 {
     internal static class UrlBuilder
     {
-        private const string AggregatedMeasurements = "aggregated-measurements";
-        private const string AggregatedDLR = "dlr/aggregated-dlr";
-        private const string AggregatedDLRForecast = "dlr/aggregated-dlr-forecast";
-        private const string IcingData = "icing-data";
-        private const string SagAndClearances = "sag-and-clearances";
+        private const string ConductorTemperatures = "conductor_temperatures/latest";
+        private const string Currents = "currents/latest";
+        private const string Dlrs = "dlrs/latest";
+        private const string DlrForecast = "weather_based_dlrs/forecast";
 
-        private const string V1 = "api/v1";
-        private const string Beta = "api/beta";
+        private const string CapacityMonitoring = "capacity_monitoring";
+        private const string GridInsight = "grid_insights";
+        private const string V1 = "v1/lines";
 
         private const string DateFormat = "o";
 
@@ -27,19 +28,6 @@ namespace HeimdallPower
                 .AddQueryParam("toDateTime", to.ToString(DateFormat));
         }
 
-        private static NameValueCollection GetIdentifierParam(LineDto line, SpanDto span, SpanPhaseDto spanPhase)
-        {
-            var identifierParam = new NameValueCollection();
-            if (spanPhase != null)
-                identifierParam.AddQueryParam("spanPhaseId", spanPhase.Id.ToString());
-            else if (span != null)
-                identifierParam.AddQueryParam("spanId", span.Id.ToString());
-            else
-                identifierParam["lineId"] = line.Id.ToString();
-
-            return identifierParam;
-        }
-
         private static NameValueCollection GetIntervalDurationParam(string intervalDuration)
         {
             var durationParam = new NameValueCollection();
@@ -47,58 +35,42 @@ namespace HeimdallPower
             return durationParam;
         }
 
-        public static string BuildAggregatedMeasurementsUrl(LineDto line, SpanDto span, DateTime from, DateTime to,
-            string intervalDuration, MeasurementType measurementType, AggregationType aggregationType)
+        public static string BuildAggregatedConductorTemperatureUrl(LineDto line, string unitSystem)
         {
             var queryParams = new NameValueCollection()
-                .AddQueryParam(GetDateTimeParams(from, to))
-                .AddQueryParam(GetIdentifierParam(line, span, null))
-                .AddQueryParam(GetIntervalDurationParam(intervalDuration))
-                .AddQueryParam("measurementType", measurementType.ToString())
-                .AddQueryParam("aggregationType", aggregationType.ToString());
-
-            return GetFullUrl(AggregatedMeasurements, queryParams);
+                .AddQueryParam("unit_system", unitSystem);
+            return GetFullUrl(ConductorTemperatures, GridInsight, queryParams, line.Id.ToString());
         }
 
-        public static string BuildIcingUrl(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
+        public static string BuildLatestCurrentsUrl(LineDto line)
         {
-            var queryParams = new NameValueCollection()
-                .AddQueryParam(GetDateTimeParams(from, to))
-                .AddQueryParam(GetIdentifierParam(line, span, spanPhase));
-            return GetFullUrl(IcingData, queryParams);
+            return GetFullUrl(Currents, GridInsight, line.Id.ToString());
         }
 
-        public static string BuildSagAndClearanceUrl(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
+        public static string BuildAggregatedDlrUrl(LineDto line, DLRType dlrType)
         {
             var queryParams = new NameValueCollection()
-                .AddQueryParam(GetDateTimeParams(from, to))
-                .AddQueryParam(GetIdentifierParam(line, span, spanPhase));
-            return GetFullUrl(SagAndClearances, queryParams);
-        }
-
-        public static string BuildAggregatedDlrUrl(LineDto line, DateTime from, DateTime to, DLRType dlrType, string intervalDuration)
-        {
-            var queryParams = new NameValueCollection()
-                .AddQueryParam(GetDateTimeParams(from, to))
-                .AddQueryParam(GetIdentifierParam(line, null, null))
-                .AddQueryParam(GetIntervalDurationParam(intervalDuration))
                 .AddQueryParam("dlrType", dlrType.ToString());
-            return GetFullUrl(AggregatedDLR, queryParams);
+            return GetFullUrl(Dlrs, CapacityMonitoring, queryParams, line.Id.ToString());
         }
 
         public static string BuildAggregatedDlrForecastUrl(LineDto line, int hoursAhead, DLRType? dlrType)
         {
             var queryParams = new NameValueCollection()
-                .AddQueryParam(GetIdentifierParam(line, null, null))
                 .AddQueryParam("hoursAhead", hoursAhead.ToString())
                 .AddQueryParam("dlrType", dlrType.HasValue ? dlrType.ToString() : DLRType.Cigre.ToString());
-            return GetFullUrl(AggregatedDLRForecast, queryParams);
+            return GetFullUrl(DlrForecast, CapacityMonitoring,  queryParams, line.Id.ToString());
         }
 
 
-        private static string GetFullUrl(string endpoint, NameValueCollection queryParams, string apiVersion = V1)
+        private static string GetFullUrl(string endpoint, string module, NameValueCollection queryParams, string lineId, string apiVersion = V1)
         {
-            return $"{apiVersion}/{endpoint}{queryParams.ToQueryString()}";
+            return $"{module}/{apiVersion}/{lineId}/{endpoint}{queryParams.ToQueryString()}";
+        }
+
+        private static string GetFullUrl(string endpoint, string module, string lineId, string apiVersion = V1)
+        {
+            return $"{module}/{apiVersion}/{lineId}/{endpoint}";
         }
 
         public static string GetFullUrl(string endpoint, string apiVersion = V1)

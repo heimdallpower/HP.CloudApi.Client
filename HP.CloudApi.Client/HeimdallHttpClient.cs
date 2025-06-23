@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
@@ -17,7 +19,8 @@ namespace HeimdallPower
         private readonly string _authority;
 
         private const string ProdApiUrl = "https://api.heimdallcloud.com";
-        private const string DevApiUrl = "https://api.heimdallcloud-dev.com";
+        //private const string DevApiUrl = "https://api.heimdallcloud-dev.com";
+        private const string DevApiUrl = "https://external-api.heimdallcloud-dev.com";
 
         private const string Policy = "B2C_1A_CLIENTCREDENTIALSFLOW";
         private const string ProdInstance = "https://hpadb2cprod.b2clogin.com";
@@ -70,6 +73,10 @@ namespace HeimdallPower
             if (DateTime.Now > _tokenExpiresOn)
             {
                 AuthenticationResult authenticationResult = await MsalClient.AcquireTokenForClient(new string[] { _scope }).ExecuteAsync();
+                var handler = new JwtSecurityTokenHandler();
+                var token = handler.ReadJwtToken(authenticationResult.AccessToken);
+                var region = token.Claims.First(claim => claim.Type == "region").Value;
+                HttpClient.DefaultRequestHeaders.Add("x-region", region);
                 _tokenExpiresOn = authenticationResult.ExpiresOn;
                 HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authenticationResult.AccessToken);
             }
