@@ -21,13 +21,6 @@ namespace HeimdallPower
 
         private const string DateFormat = "o";
 
-        private static NameValueCollection GetDateTimeParams(DateTime from, DateTime to)
-        {
-            return new NameValueCollection()
-                .AddQueryParam("fromDateTime", from.ToString(DateFormat))
-                .AddQueryParam("toDateTime", to.ToString(DateFormat));
-        }
-
         public static string BuildLatestConductorTemperatureUrl(LineDto line, string unitSystem)
         {
             var queryParams = new NameValueCollection()

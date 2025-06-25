@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure;
 using HeimdallPower.Entities;
 using HeimdallPower.Enums;
 using HeimdallPower.ExtensionMethods;
@@ -31,45 +32,24 @@ namespace HeimdallPower
         }
 
         /// <summary>
-        /// Get aggregated measurements per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
+        /// Get either current og temeperature for a line
         /// </summary>
-        public async Task<AggregatedFloatValueDto> GetAggregatedMeasurements(LineDto line, MeasurementType measurementType, string unitSystem = "metric")
+        public async Task<AggregatedFloatValueDto> GetAggregatedMeasurements(LineDto line, MeasurementType measurementType, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
         {
             var url = "";
-            if (measurementType == MeasurementType.Current)
+            if (measurementType == MeasurementType.WireTemperature)
             {
                 url = UrlBuilder.BuildLatestConductorTemperatureUrl(line, unitSystem);
+                var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url);
+                if(aggregationType == AggregationType.Max) return new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Max };
+                else return new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Min };
             }
             else{
                 url = UrlBuilder.BuildLatestCurrentsUrl(line);
+                var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
+                return new AggregatedFloatValueDto { IntervalStartTime = response.Data.Current.Timestamp, Value = response.Data.Current.Value };
             }
-
-            var response = await _heimdallClient.Get<ApiResponse<AggregatedFloatValueDto>>(url);
-
-            return response != null ? response.Data : new();
         }
-
-        /*/// <summary>
-        /// Get icing data per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
-        /// </summary>
-        public async Task<LineDto<IcingDataDto>> GetIcingData(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
-        {
-            var url = UrlBuilder.BuildIcingUrl(line, span, spanPhase, from, to);
-            var response = await _heimdallClient.Get<ApiResponse<LineDto<IcingDataDto>>>(url);
-
-            return response != null ? response.Data : new();
-        }
-
-        /// <summary>
-        /// Get sag and clearances per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
-        /// </summary>
-        public async Task<List<LineDto<SagAndClearanceDto>>> GetSagAndClearances(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
-        {
-            var url = UrlBuilder.BuildSagAndClearanceUrl(line, span, spanPhase, from, to);
-            var response = await _heimdallClient.Get<ApiResponse<List<LineDto<SagAndClearanceDto>>>>(url);
-
-            return response != null ? response.Data : new();
-        }*/
 
         /// <summary>
         /// Get aggregated dynamic line ratings for a line

@@ -26,15 +26,13 @@ var line = new LineDto
 };
 
 // Fetch Aggregated Measurements data
-var temperature = await api.GetAggregatedConductorTemperature(line);
-Console.WriteLine(temperature.Unit);
-Console.WriteLine(temperature.ConductorTemperatures.Max);
-Console.WriteLine(temperature.ConductorTemperatures.Min);
+var responseTemp = await api.GetAggregatedMeasurements(line, MeasurementType.WireTemperature);
+Console.WriteLine(responseTemp.Value);
+Console.WriteLine(responseTemp.IntervalStartTime);
 
-var current = await api.GetAggregatedCurrent(line);
-Console.WriteLine(current.Unit);
-Console.WriteLine(current.Current.Timestamp);
-Console.WriteLine(current.Current.Value);
+var responseCurrent = await api.GetAggregatedMeasurements(line, MeasurementType.Current);
+Console.WriteLine(responseCurrent.Value);
+Console.WriteLine(responseCurrent.IntervalStartTime);
 
 // Fetch DLR data*/
 var aggregatedDLR = await api.GetAggregatedDlr(line, DLRType.HeimdallDLR);
