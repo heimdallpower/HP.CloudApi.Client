@@ -33,21 +33,18 @@ namespace HeimdallPower
         /// <summary>
         /// Get aggregated measurements per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
         /// </summary>
-        public async Task<ConductorTemperatureDto> GetAggregatedConductorTemperature(LineDto line)
-        { 
-            var url = UrlBuilder.BuildAggregatedConductorTemperatureUrl(line, "metric");
-            var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url);
-
-            return response != null ? response.Data : new();
-        }
-
-        /// <summary>
-        /// Get aggregated measurements per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
-        /// </summary>
-        public async Task<CurrentDto> GetAggregatedCurrent(LineDto line)
+        public async Task<AggregatedFloatValueDto> GetAggregatedMeasurements(LineDto line, MeasurementType measurementType, string unitSystem = "metric")
         {
-            var url = UrlBuilder.BuildLatestCurrentsUrl(line);
-            var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
+            var url = "";
+            if (measurementType == MeasurementType.Current)
+            {
+                url = UrlBuilder.BuildLatestConductorTemperatureUrl(line, unitSystem);
+            }
+            else{
+                url = UrlBuilder.BuildLatestCurrentsUrl(line);
+            }
+
+            var response = await _heimdallClient.Get<ApiResponse<AggregatedFloatValueDto>>(url);
 
             return response != null ? response.Data : new();
         }

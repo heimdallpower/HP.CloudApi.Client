@@ -28,14 +28,7 @@ namespace HeimdallPower
                 .AddQueryParam("toDateTime", to.ToString(DateFormat));
         }
 
-        private static NameValueCollection GetIntervalDurationParam(string intervalDuration)
-        {
-            var durationParam = new NameValueCollection();
-            durationParam["intervalDuration"] = intervalDuration;
-            return durationParam;
-        }
-
-        public static string BuildAggregatedConductorTemperatureUrl(LineDto line, string unitSystem)
+        public static string BuildLatestConductorTemperatureUrl(LineDto line, string unitSystem)
         {
             var queryParams = new NameValueCollection()
                 .AddQueryParam("unit_system", unitSystem);
