@@ -4,7 +4,7 @@ namespace HeimdallPower.Entities
 {
     public class AggregatedFloatValueDto
     {
-        public DateTime IntervalStartTime;
+        public DateTime Timestamp;
         public double Value;
     }
 }

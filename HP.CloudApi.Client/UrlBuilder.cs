@@ -12,7 +12,8 @@ namespace HeimdallPower
     {
         private const string ConductorTemperatures = "conductor_temperatures/latest";
         private const string Currents = "currents/latest";
-        private const string Dlrs = "dlrs/latest";
+        private const string HeimdallDlr = "heimdall_dlrs/latest";
+        private const string HeimdallAar = "heimdall_dlrs/latest";
         private const string DlrForecast = "weather_based_dlrs/forecast";
 
         private const string CapacityMonitoring = "capacity_monitoring";
@@ -33,18 +34,20 @@ namespace HeimdallPower
             return GetFullUrl(Currents, GridInsight, line.Id.ToString());
         }
 
-        public static string BuildAggregatedDlrUrl(LineDto line, DLRType dlrType)
+        public static string BuildHeimdallDlrUrl(LineDto line)
         {
-            var queryParams = new NameValueCollection()
-                .AddQueryParam("dlrType", dlrType.ToString());
-            return GetFullUrl(Dlrs, CapacityMonitoring, queryParams, line.Id.ToString());
+            return GetFullUrl(HeimdallDlr, CapacityMonitoring, line.Id.ToString());
+        }
+        
+        public static string BuildHeimdallAarUrl(LineDto line)
+        {
+            return GetFullUrl(HeimdallAar, CapacityMonitoring, line.Id.ToString());
         }
 
-        public static string BuildAggregatedDlrForecastUrl(LineDto line, int hoursAhead, DLRType? dlrType)
+        public static string BuildAggregatedDlrForecastUrl(LineDto line, int hoursAhead)
         {
             var queryParams = new NameValueCollection()
-                .AddQueryParam("hoursAhead", hoursAhead.ToString())
-                .AddQueryParam("dlrType", dlrType.HasValue ? dlrType.ToString() : DLRType.Cigre.ToString());
+                .AddQueryParam("hoursAhead", hoursAhead.ToString());
             return GetFullUrl(DlrForecast, CapacityMonitoring,  queryParams, line.Id.ToString());
         }
 

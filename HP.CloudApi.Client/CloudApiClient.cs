@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Azure;
 using HeimdallPower.Entities;
 using HeimdallPower.Enums;
-using HeimdallPower.ExtensionMethods;
 
 namespace HeimdallPower
 {
@@ -32,7 +29,7 @@ namespace HeimdallPower
         }
 
         /// <summary>
-        /// Get either current og temeperature for a line
+        /// Get either current og temperature for a line
         /// </summary>
         public async Task<AggregatedFloatValueDto> GetAggregatedMeasurements(LineDto line, MeasurementType measurementType, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
         {
@@ -40,14 +37,17 @@ namespace HeimdallPower
             if (measurementType == MeasurementType.WireTemperature)
             {
                 url = UrlBuilder.BuildLatestConductorTemperatureUrl(line, unitSystem);
-                var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url);
-                if(aggregationType == AggregationType.Max) return new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Max };
-                else return new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Min };
+                var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url); 
+                if (response == null) return new AggregatedFloatValueDto();
+                return aggregationType == AggregationType.Max ? 
+                    new AggregatedFloatValueDto { Timestamp = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Max } 
+                    : new AggregatedFloatValueDto { Timestamp = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Min };
             }
             else{
                 url = UrlBuilder.BuildLatestCurrentsUrl(line);
                 var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
-                return new AggregatedFloatValueDto { IntervalStartTime = response.Data.Current.Timestamp, Value = response.Data.Current.Value };
+                if (response == null) return new AggregatedFloatValueDto();
+                return new AggregatedFloatValueDto { Timestamp = response.Data.Current.Timestamp, Value = response.Data.Current.Value };
             }
         }
 
@@ -56,18 +56,28 @@ namespace HeimdallPower
         /// </summary>
         public async Task<DLRDto> GetAggregatedDlr(LineDto line, DLRType dlrType)
         {
-            var url = UrlBuilder.BuildAggregatedDlrUrl(line, dlrType);
-            var response = await _heimdallClient.Get<ApiResponse<DLRDto>>(url);
-
-            return response != null ? response.Data : new();
+            if (dlrType == DLRType.HeimdallDLR)
+            {
+                var url = UrlBuilder.BuildHeimdallDlrUrl(line);
+                var response = await _heimdallClient.Get<ApiResponse<HeimdallDlrDto>>(url);
+                if (response == null) return new DLRDto();
+                return new DLRDto() { Timestamp = response.Data.Dlr.Timestamp, Ampacity = response.Data.Dlr.Value };
+            }
+            else
+            {
+                var url = UrlBuilder.BuildHeimdallAarUrl(line);
+                var response = await _heimdallClient.Get<ApiResponse<HeimdallAarDto>>(url);
+                if (response == null) return new DLRDto();
+                return new DLRDto() { Timestamp = response.Data.Aar.Timestamp, Ampacity = response.Data.Aar.Value };
+            }
         }
 
         /// <summary>
-        /// Get hourly DLR forecasts (Cigre) up to 48 hours ahead in time
+        /// Get hourly DLR forecasts up to 240 hours ahead in time
         /// </summary>
-        public async Task<List<LineAggregatedDLRForecastDto>> GetAggregatedDlrForecast(LineDto line, int hoursAhead, DLRType? dlrType = null)
+        public async Task<List<LineAggregatedDLRForecastDto>> GetAggregatedDlrForecast(LineDto line, int hoursAhead)
         {
-            var url = UrlBuilder.BuildAggregatedDlrForecastUrl(line, hoursAhead, dlrType);
+            var url = UrlBuilder.BuildAggregatedDlrForecastUrl(line, hoursAhead);
             var response = await _heimdallClient.Get<ApiResponse<List<LineAggregatedDLRForecastDto>>>(url);
 
             return response != null ? response.Data : new();
