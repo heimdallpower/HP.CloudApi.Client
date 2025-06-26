@@ -51,6 +51,10 @@ namespace HeimdallPower
             return GetFullUrl(DlrForecast, CapacityMonitoring,  queryParams, line.Id.ToString());
         }
 
+        public static string BuildAssetsUrl()
+        {
+            return "assets/v1/assets";
+        }
 
         private static string GetFullUrl(string endpoint, string module, NameValueCollection queryParams, string lineId, string apiVersion = V1)
         {
@@ -60,11 +64,6 @@ namespace HeimdallPower
         private static string GetFullUrl(string endpoint, string module, string lineId, string apiVersion = V1)
         {
             return $"{module}/{apiVersion}/{lineId}/{endpoint}";
-        }
-
-        public static string GetFullUrl(string endpoint, string apiVersion = V1)
-        {
-            return $"{apiVersion}/{endpoint}";
         }
     }
 }
