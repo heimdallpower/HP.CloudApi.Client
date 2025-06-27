@@ -1,40 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using HeimdallPower;
 using HeimdallPower.Entities;
 using HeimdallPower.Enums;
 
 // Configuration setup
-var clientId = "ClientId";
-var clientSecret = "ClientSecret";
+var clientId = "clientId";
+var clientSecret = "clientSecret";
 var useDeveloperApi = true;
-var lineName = useDeveloperApi ? "Heimdall Power Line" : "Strøm Trafo - Fv";
 
 Console.WriteLine("Initiating cloud API test client");
 
 // Instantiate Cloud API Client
 var api = new CloudApiClient(clientId, clientSecret, useDeveloperApi);
 
-var from = DateTime.Now.AddDays(-7);
-var to = DateTime.Now;
+var lines = await api.GetLines();
+Console.WriteLine(lines.First().Name);
+Console.WriteLine(lines.Count);
+
 var line = new LineDto
 {
     Name = "DLR Demo",
-    Id = new Guid("LineId"),
-    Owner = "Demos & Simulations",
+    Id = new Guid("LineGuid"),
     Spans = new List<SpanDto>()
 };
 
 // Fetch Aggregated Measurements data
 var responseTemp = await api.GetAggregatedMeasurements(line, MeasurementType.WireTemperature);
 Console.WriteLine(responseTemp.Value);
-Console.WriteLine(responseTemp.IntervalStartTime);
+Console.WriteLine(responseTemp.Timestamp);
 
 var responseCurrent = await api.GetAggregatedMeasurements(line, MeasurementType.Current);
 Console.WriteLine(responseCurrent.Value);
-Console.WriteLine(responseCurrent.IntervalStartTime);
+Console.WriteLine(responseCurrent.Timestamp);
 
-// Fetch DLR data*/
-var aggregatedDLR = await api.GetAggregatedDlr(line, DLRType.HeimdallDLR);
-Console.WriteLine(aggregatedDLR.Dlr.MinAmpacity);
-//var forecastDLR = await api.GetAggregatedDlrForecast(line, 24, DLRType.HeimdallDLR);
+// Fetch DLR data
+var responseDlr = await api.GetAggregatedDlr(line, DLRType.HeimdallDLR);
+Console.WriteLine(responseDlr.Ampacity);
+Console.WriteLine(responseDlr.Timestamp);
+
+// Fetch DLR Forecast
+var responseDlrForecast = await api.GetAggregatedDlrForecast(line, 72);
+Console.WriteLine(responseDlrForecast.First().Prediction.Ampacity);

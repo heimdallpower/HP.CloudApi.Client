@@ -21,11 +21,22 @@ namespace HeimdallPower
         /// <summary>
         /// Get all available assets.
         /// </summary>
-        public async Task<AssetsResponseObject> GetAssets()
+        public async Task<List<LineDto>> GetLines()
         {
             var url = UrlBuilder.BuildAssetsUrl();
             var response = await _heimdallClient.Get<AssetsResponseObject>(url);
-            return response == null ? new AssetsResponseObject() : response;
+            
+            var lines = new List<LineDto>();
+
+            foreach (var gridOwner in response.Data.GridOwners)
+            {
+                foreach (var facility in gridOwner.Facilities)
+                {
+                    if(facility?.Line != null) lines.Add(facility.Line);
+                }
+            }
+
+            return lines;
         }
 
         /// <summary>
@@ -74,12 +85,12 @@ namespace HeimdallPower
         /// <summary>
         /// Get hourly DLR forecasts up to 240 hours ahead in time
         /// </summary>
-        public async Task<List<LineAggregatedDLRForecastDto>> GetAggregatedDlrForecast(LineDto line, int hoursAhead)
+        public async Task<List<ForecastDto>> GetAggregatedDlrForecast(LineDto line, int hoursAhead)
         {
-            var url = UrlBuilder.BuildAggregatedDlrForecastUrl(line, hoursAhead);
-            var response = await _heimdallClient.Get<ApiResponse<List<LineAggregatedDLRForecastDto>>>(url);
+            var url = UrlBuilder.BuildDlrForecastUrl(line, hoursAhead);
+            var response = await _heimdallClient.Get<ApiResponse<AarForecastDto>>(url);
 
-            return response != null ? response.Data : new();
+            return response != null ? response.Data.AarForecast.Forecasts : new();
         }
     }
 }

@@ -13,8 +13,8 @@ namespace HeimdallPower
         private const string ConductorTemperatures = "conductor_temperatures/latest";
         private const string Currents = "currents/latest";
         private const string HeimdallDlr = "heimdall_dlrs/latest";
-        private const string HeimdallAar = "heimdall_dlrs/latest";
-        private const string DlrForecast = "weather_based_dlrs/forecast";
+        private const string HeimdallAar = "heimdall_aars/latest";
+        private const string HeimdallAarForecast = "heimdall_aars/forecast";
 
         private const string CapacityMonitoring = "capacity_monitoring";
         private const string GridInsight = "grid_insights";
@@ -44,11 +44,11 @@ namespace HeimdallPower
             return GetFullUrl(HeimdallAar, CapacityMonitoring, line.Id.ToString());
         }
 
-        public static string BuildAggregatedDlrForecastUrl(LineDto line, int hoursAhead)
+        public static string BuildDlrForecastUrl(LineDto line, int hoursAhead)
         {
             var queryParams = new NameValueCollection()
                 .AddQueryParam("hoursAhead", hoursAhead.ToString());
-            return GetFullUrl(DlrForecast, CapacityMonitoring,  queryParams, line.Id.ToString());
+            return GetFullUrl(HeimdallAarForecast, CapacityMonitoring,  queryParams, line.Id.ToString());
         }
 
         public static string BuildAssetsUrl()
