@@ -16,7 +16,6 @@ namespace HeimdallPower
 
         private const string GridInsight = "grid_insights";
         private const string V1 = "v1/lines";
-        private const string OldV1 = "api/v1";
         private const string Beta = "api/beta";
 
         private const string DateFormat = "o";
