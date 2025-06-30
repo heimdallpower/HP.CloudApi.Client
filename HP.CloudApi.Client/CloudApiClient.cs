@@ -29,10 +29,7 @@ namespace HeimdallPower
             var response = await _heimdallClient.Get<ApiResponse<List<LineDto>>>(url);
             return response == null ? new List<LineDto>() : response.Data.ToList();
         }
-
-        /// <summary>
-        /// Get aggregated measurements per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
-        /// </summary>
+        
         /// <summary>
         /// Get either current og temperature for a line
         /// </summary>
