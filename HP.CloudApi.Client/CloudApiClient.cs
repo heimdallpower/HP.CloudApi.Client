@@ -21,7 +21,7 @@ namespace HeimdallPower
         }
 
         /// <summary>
-        /// Get a list of line objects. The line object consists of its id, the spans of the line, and the spanphases of each span. The ids of the lines, spans and phases can be used to query the other endpoints.
+        /// Get a list of all line objects.
         /// </summary>
         public async Task<List<LineDto>> GetLines()
         {
