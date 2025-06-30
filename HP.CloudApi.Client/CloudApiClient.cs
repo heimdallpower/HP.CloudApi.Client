@@ -37,7 +37,12 @@ namespace HeimdallPower
                 if (gridOwner.Facilities == null) continue;
                 foreach (var facility in gridOwner.Facilities)
                 {
-                    if(facility.Line != null) lines.Add(facility.Line);
+                    if (facility.Line == null) 
+                        continue;
+                        
+                    var facilityLine = facility.Line;
+                    facilityLine.Owner = gridOwner.Name;
+                    lines.Add(facilityLine);
                 }
             }
 

@@ -13,6 +13,7 @@ namespace HeimdallPower.Entities
     {
         public Guid Id { get; set; }
         public string Name;
+        public int AvailableForecastHours;
         public string Owner;
         public List<SpanDto> Spans;
     }
