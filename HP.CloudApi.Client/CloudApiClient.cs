@@ -25,9 +25,23 @@ namespace HeimdallPower
         /// </summary>
         public async Task<List<LineDto>> GetLines()
         {
-            var url = UrlBuilder.GetFullUrlOld("lines");
-            var response = await _heimdallClient.Get<ApiResponse<List<LineDto>>>(url);
-            return response == null ? new List<LineDto>() : response.Data.ToList();
+            var url = UrlBuilder.BuildAssetsUrl();
+            var response = await _heimdallClient.Get<AssetsResponseObject>(url);
+            
+            var lines = new List<LineDto>();
+            
+            if (response == null) return lines;
+
+            foreach (var gridOwner in response.Data.GridOwners)
+            {
+                if (gridOwner.Facilities == null) continue;
+                foreach (var facility in gridOwner.Facilities)
+                {
+                    if(facility.Line != null) lines.Add(facility.Line);
+                }
+            }
+
+            return lines;
         }
         
         /// <summary>
