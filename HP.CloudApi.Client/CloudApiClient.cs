@@ -25,7 +25,7 @@ namespace HeimdallPower
         /// </summary>
         public async Task<List<LineDto>> GetLines()
         {
-            var url = UrlBuilder.GetFullUrl("lines");
+            var url = UrlBuilder.GetFullUrlOld("lines");
             var response = await _heimdallClient.Get<ApiResponse<List<LineDto>>>(url);
             return response == null ? new List<LineDto>() : response.Data.ToList();
         }
@@ -33,42 +33,26 @@ namespace HeimdallPower
         /// <summary>
         /// Get aggregated measurements per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
         /// </summary>
-        public async Task<List<AggregatedFloatValueDto>> GetAggregatedMeasurements(LineDto line, SpanDto span,
-            DateTime from, DateTime to, string intervalDuration, MeasurementType measurementType,
-            AggregationType aggregationType)
+        /// <summary>
+        /// Get either current og temperature for a line
+        /// </summary>
+        public async Task<AggregatedFloatValueDto> GetLatestMeasurements(LineDto line, MeasurementType measurementType, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
         {
-            if (!intervalDuration.IsValidIso8601Duration())
+            if (measurementType == MeasurementType.WireTemperature)
             {
-                throw new ArgumentException($"Interval duration '{intervalDuration}' is not a valid ISO 8601 string");
+                var url = UrlBuilder.BuildLatestConductorTemperatureUrl(line, unitSystem);
+                var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url); 
+                if (response == null) return new AggregatedFloatValueDto();
+                return aggregationType == AggregationType.Max ? 
+                    new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Max } 
+                    : new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Min };
             }
-            var url = UrlBuilder.BuildAggregatedMeasurementsUrl(line, span, from, to, intervalDuration,
-                measurementType,
-                aggregationType);
-            var response = await _heimdallClient.Get<ApiResponse<List<AggregatedFloatValueDto>>>(url);
-
-            return response != null ? response.Data.ToList() : new();
-        }
-
-        /// <summary>
-        /// Get icing data per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
-        /// </summary>
-        public async Task<LineDto<IcingDataDto>> GetIcingData(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
-        {
-            var url = UrlBuilder.BuildIcingUrl(line, span, spanPhase, from, to);
-            var response = await _heimdallClient.Get<ApiResponse<LineDto<IcingDataDto>>>(url);
-
-            return response != null ? response.Data : new();
-        }
-
-        /// <summary>
-        /// Get sag and clearances per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
-        /// </summary>
-        public async Task<List<LineDto<SagAndClearanceDto>>> GetSagAndClearances(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
-        {
-            var url = UrlBuilder.BuildSagAndClearanceUrl(line, span, spanPhase, from, to);
-            var response = await _heimdallClient.Get<ApiResponse<List<LineDto<SagAndClearanceDto>>>>(url);
-
-            return response != null ? response.Data : new();
+            else{
+                var url = UrlBuilder.BuildLatestCurrentsUrl(line);
+                var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
+                if (response == null) return new AggregatedFloatValueDto();
+                return new AggregatedFloatValueDto { IntervalStartTime = response.Data.Current.Timestamp, Value = response.Data.Current.Value };
+            }
         }
 
         /// <summary>
