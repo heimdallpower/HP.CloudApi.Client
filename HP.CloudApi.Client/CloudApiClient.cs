@@ -30,7 +30,7 @@ namespace HeimdallPower
             
             var lines = new List<LineDto>();
             
-            if (response == null) return lines;
+            if (response?.Data == null) return lines;
 
             foreach (var gridOwner in response.Data.GridOwners)
             {
