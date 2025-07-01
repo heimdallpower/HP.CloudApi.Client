@@ -24,10 +24,8 @@ var from = DateTime.Now.AddDays(-7);
 var to = DateTime.Now;
 
 // Fetch Aggregated Measurements data
-var measurementsLine = await api.GetLatestMeasurements(line,
-    MeasurementType.Current, AggregationType.Average);
-var measurementsSpan = await api.GetLatestMeasurements(line,
-    MeasurementType.Current, AggregationType.Average);
+var measurementsLine = await api.GetLatestCurrent(line);
+var measurementsSpan = await api.GetLatestConductorTemperature(line);
 
 // Fetch DLR data
 var aggregatedDLR = await api.GetAggregatedDlr(line, from, to, DLRType.HP, "P1D");
