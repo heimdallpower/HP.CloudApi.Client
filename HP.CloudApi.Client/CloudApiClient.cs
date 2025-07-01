@@ -31,25 +31,28 @@ namespace HeimdallPower
         }
         
         /// <summary>
-        /// Get either current og temperature for a line
+        /// Get latest current for a line
         /// </summary>
-        public async Task<AggregatedFloatValueDto> GetLatestMeasurements(LineDto line, MeasurementType measurementType, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
+        public async Task<AggregatedFloatValueDto> GetLatestCurrent(LineDto line, string unitSystem = "metric")
         {
-            if (measurementType == MeasurementType.WireTemperature)
-            {
+            var url = UrlBuilder.BuildLatestCurrentsUrl(line);
+            var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
+            if (response == null) return new AggregatedFloatValueDto();
+            return new AggregatedFloatValueDto
+                { IntervalStartTime = response.Data.Current.Timestamp, Value = response.Data.Current.Value };
+        }
+        
+        /// <summary>
+        /// Get latest temperature for a line
+        /// </summary>
+        public async Task<AggregatedFloatValueDto> GetLatestConductorTemperature(LineDto line, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
+        {
                 var url = UrlBuilder.BuildLatestConductorTemperatureUrl(line, unitSystem);
                 var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url); 
                 if (response == null) return new AggregatedFloatValueDto();
                 return aggregationType == AggregationType.Max ? 
                     new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Max } 
                     : new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Min };
-            }
-            else{
-                var url = UrlBuilder.BuildLatestCurrentsUrl(line);
-                var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
-                if (response == null) return new AggregatedFloatValueDto();
-                return new AggregatedFloatValueDto { IntervalStartTime = response.Data.Current.Timestamp, Value = response.Data.Current.Value };
-            }
         }
 
         /// <summary>
