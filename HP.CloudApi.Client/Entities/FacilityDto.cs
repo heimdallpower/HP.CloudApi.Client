@@ -1,6 +1,6 @@
 ﻿namespace HeimdallPower.Entities;
 
-public class FacilityDto
+public record FacilityDto
 {
     public string Name { get; set; }
     public LineDto Line { get; set; }

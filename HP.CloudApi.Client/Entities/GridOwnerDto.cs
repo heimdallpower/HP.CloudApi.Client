@@ -3,18 +3,18 @@ using Newtonsoft.Json;
 
 namespace HeimdallPower.Entities;
 
-public class GridOwnerDto
+public record GridOwnerDto
 {
     public string Name { get; set; }
     public List<FacilityDto> Facilities { get; set; }
 }
 
-public class AssetsResponseObject
+public record AssetsResponseObject
 {
     public DataResponseObject Data { get; set; }
 }
 
-public class DataResponseObject
+public record DataResponseObject
 {
     [JsonProperty("grid_owners")]
     public List<GridOwnerDto> GridOwners { get; set; }
