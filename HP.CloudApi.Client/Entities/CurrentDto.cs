@@ -2,14 +2,26 @@
 
 namespace HeimdallPower.Entities;
 
-public record CurrentDto
+public sealed class CurrentDto
 {
-    public string Unit {  get; set; }
-    public Current Current { get; set; }
+    public string Unit {  get;}
+    public Current Current { get; }
+    
+    public CurrentDto(string unit, Current current)
+    {
+        Unit = unit;
+        Current = current;
+    }
 }
 
-public record Current
+public sealed class Current
 {
-    public DateTime Timestamp { get; set; }
-    public double Value { get; set; }
+    public DateTime Timestamp { get; }
+    public double Value { get; }
+
+    public Current(DateTime timestamp, double value)
+    {
+        Timestamp = timestamp;
+        Value = value;
+    }
 }
