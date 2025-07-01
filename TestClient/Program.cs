@@ -28,5 +28,6 @@ var measurementsLine = await api.GetLatestCurrent(line);
 var measurementsSpan = await api.GetLatestConductorTemperature(line);
 
 // Fetch DLR data
-var aggregatedDLR = await api.GetAggregatedDlr(line, from, to, DLRType.HP, "P1D");
-var forecastDLR = await api.GetAggregatedDlrForecast(line, 24, DLRType.HeimdallDLR);
+var aggregatedDLR = await api.GetLatestDlr(line, DLRType.HP);
+var forecastDLR = await api.GetDlrForecast(line,DLRType.HeimdallDLR);
+Console.WriteLine(forecastDLR.First().Timestamp);

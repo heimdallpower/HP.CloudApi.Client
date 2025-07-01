@@ -11,9 +11,11 @@ namespace HeimdallPower
     {
         private const string ConductorTemperatures = "conductor_temperatures/latest";
         private const string Currents = "currents/latest";
-        private const string AggregatedDLR = "dlr/aggregated-dlr";
-        private const string AggregatedDLRForecast = "dlr/aggregated-dlr-forecast";
+        private const string HeimdallDlr = "heimdall_dlrs/latest";
+        private const string HeimdallAar = "heimdall_aars/latest";
+        private const string HeimdallAarForecast = "heimdall_aars/forecasts";
 
+        private const string CapacityMonitoring = "capacity_monitoring";
         private const string GridInsight = "grid_insights";
         private const string V1 = "v1/lines";
         private const string Beta = "api/beta";
@@ -59,30 +61,25 @@ namespace HeimdallPower
             return GetFullUrl(Currents, GridInsight, line.Id.ToString());
         }
 
-        public static string BuildAggregatedDlrUrl(LineDto line, DateTime from, DateTime to, DLRType dlrType, string intervalDuration)
+        public static string BuildHeimdallDlrUrl(LineDto line)
         {
-            var queryParams = new NameValueCollection()
-                .AddQueryParam(GetDateTimeParams(from, to))
-                .AddQueryParam(GetIdentifierParam(line, null, null))
-                .AddQueryParam(GetIntervalDurationParam(intervalDuration))
-                .AddQueryParam("dlrType", dlrType.ToString());
-            return GetFullUrlOld(AggregatedDLR, queryParams);
+            return GetFullUrl(HeimdallDlr, CapacityMonitoring, line.Id.ToString());
+        }
+        
+        public static string BuildHeimdallAarUrl(LineDto line)
+        {
+            return GetFullUrl(HeimdallAar, CapacityMonitoring, line.Id.ToString());
         }
 
-        public static string BuildAggregatedDlrForecastUrl(LineDto line, int hoursAhead, DLRType? dlrType)
+        public static string BuildDlrForecastUrl(LineDto line)
         {
-            var queryParams = new NameValueCollection()
-                .AddQueryParam(GetIdentifierParam(line, null, null))
-                .AddQueryParam("hoursAhead", hoursAhead.ToString())
-                .AddQueryParam("dlrType", dlrType.HasValue ? dlrType.ToString() : DLRType.Cigre.ToString());
-            return GetFullUrlOld(AggregatedDLRForecast, queryParams);
+            return GetFullUrl(HeimdallAarForecast, CapacityMonitoring, line.Id.ToString());
         }
         
         public static string BuildAssetsUrl()
         {
             return "assets/v1/assets";
         }
-
 
         private static string GetFullUrlOld(string endpoint, NameValueCollection queryParams, string apiVersion = V1)
         {
