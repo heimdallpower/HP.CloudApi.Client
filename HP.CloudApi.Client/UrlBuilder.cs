@@ -88,11 +88,6 @@ namespace HeimdallPower
         {
             return $"{apiVersion}/{endpoint}{queryParams.ToQueryString()}";
         }
-
-        public static string GetFullUrlOld(string endpoint, string apiVersion = V1)
-        {
-            return $"{apiVersion}/{endpoint}";
-        }
         
         private static string GetFullUrl(string endpoint, string module, NameValueCollection queryParams, string lineId, string apiVersion = V1)
         {
