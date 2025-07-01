@@ -13,6 +13,7 @@ namespace HeimdallPower
         private const string Currents = "currents/latest";
         private const string HeimdallDlr = "heimdall_dlrs/latest";
         private const string HeimdallAar = "heimdall_aars/latest";
+        private const string HeimdallDlrForecast = "heimdall_dlrs/forecasts";
         private const string HeimdallAarForecast = "heimdall_aars/forecasts";
 
         private const string CapacityMonitoring = "capacity_monitoring";
@@ -42,6 +43,11 @@ namespace HeimdallPower
         }
 
         public static string BuildDlrForecastUrl(LineDto line)
+        {
+            return GetFullUrl(HeimdallDlrForecast, CapacityMonitoring, line.Id.ToString());
+        }
+        
+        public static string BuildAarForecastUrl(LineDto line)
         {
             return GetFullUrl(HeimdallAarForecast, CapacityMonitoring, line.Id.ToString());
         }
