@@ -18,36 +18,6 @@ namespace HeimdallPower
         private const string CapacityMonitoring = "capacity_monitoring";
         private const string GridInsight = "grid_insights";
         private const string V1 = "v1/lines";
-        private const string Beta = "api/beta";
-
-        private const string DateFormat = "o";
-
-        private static NameValueCollection GetDateTimeParams(DateTime from, DateTime to)
-        {
-            return new NameValueCollection()
-                .AddQueryParam("fromDateTime", from.ToString(DateFormat))
-                .AddQueryParam("toDateTime", to.ToString(DateFormat));
-        }
-
-        private static NameValueCollection GetIdentifierParam(LineDto line, SpanDto span, SpanPhaseDto spanPhase)
-        {
-            var identifierParam = new NameValueCollection();
-            if (spanPhase != null)
-                identifierParam.AddQueryParam("spanPhaseId", spanPhase.Id.ToString());
-            else if (span != null)
-                identifierParam.AddQueryParam("spanId", span.Id.ToString());
-            else
-                identifierParam["lineId"] = line.Id.ToString();
-
-            return identifierParam;
-        }
-
-        private static NameValueCollection GetIntervalDurationParam(string intervalDuration)
-        {
-            var durationParam = new NameValueCollection();
-            durationParam["intervalDuration"] = intervalDuration;
-            return durationParam;
-        }
 
         public static string BuildLatestConductorTemperatureUrl(LineDto line, string unitSystem)
         {
@@ -79,11 +49,6 @@ namespace HeimdallPower
         public static string BuildAssetsUrl()
         {
             return "assets/v1/assets";
-        }
-
-        private static string GetFullUrlOld(string endpoint, NameValueCollection queryParams, string apiVersion = V1)
-        {
-            return $"{apiVersion}/{endpoint}{queryParams.ToQueryString()}";
         }
         
         private static string GetFullUrl(string endpoint, string module, NameValueCollection queryParams, string lineId, string apiVersion = V1)
