@@ -77,16 +77,16 @@ namespace HeimdallPower
                 .AddQueryParam("dlrType", dlrType.HasValue ? dlrType.ToString() : DLRType.Cigre.ToString());
             return GetFullUrlOld(AggregatedDLRForecast, queryParams);
         }
+        
+        public static string BuildAssetsUrl()
+        {
+            return "assets/v1/assets";
+        }
 
 
         private static string GetFullUrlOld(string endpoint, NameValueCollection queryParams, string apiVersion = V1)
         {
             return $"{apiVersion}/{endpoint}{queryParams.ToQueryString()}";
-        }
-
-        public static string GetFullUrlOld(string endpoint, string apiVersion = V1)
-        {
-            return $"{apiVersion}/{endpoint}";
         }
         
         private static string GetFullUrl(string endpoint, string module, NameValueCollection queryParams, string lineId, string apiVersion = V1)

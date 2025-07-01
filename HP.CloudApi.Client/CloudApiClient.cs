@@ -21,13 +21,32 @@ namespace HeimdallPower
         }
 
         /// <summary>
-        /// Get a list of line objects. The line object consists of its id, the spans of the line, and the spanphases of each span. The ids of the lines, spans and phases can be used to query the other endpoints.
+        /// Get a list of all line objects.
         /// </summary>
         public async Task<List<LineDto>> GetLines()
         {
-            var url = UrlBuilder.GetFullUrlOld("lines");
-            var response = await _heimdallClient.Get<ApiResponse<List<LineDto>>>(url);
-            return response == null ? new List<LineDto>() : response.Data.ToList();
+            var url = UrlBuilder.BuildAssetsUrl();
+            var response = await _heimdallClient.Get<AssetsResponseObject>(url);
+            
+            var lines = new List<LineDto>();
+            
+            if (response?.Data == null) return lines;
+
+            foreach (var gridOwner in response.Data.GridOwners)
+            {
+                if (gridOwner.Facilities == null) continue;
+                foreach (var facility in gridOwner.Facilities)
+                {
+                    if (facility.Line == null) 
+                        continue;
+                        
+                    var facilityLine = facility.Line;
+                    facilityLine.Owner = gridOwner.Name;
+                    lines.Add(facilityLine);
+                }
+            }
+
+            return lines;
         }
         
         /// <summary>
