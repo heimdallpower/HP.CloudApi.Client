@@ -18,8 +18,8 @@ namespace HeimdallPower
         private readonly string _domain;
         private readonly string _authority;
 
-        private const string ProdApiUrl = "https://api.heimdallcloud.com";
-        private const string DevApiUrl = "https://api.heimdallcloud-dev.com";
+        private const string ProdApiUrl = "https://external-api.heimdallcloud.com";
+        private const string DevApiUrl = "https://external-api.heimdallcloud-dev.com";
 
         private const string Policy = "B2C_1A_CLIENTCREDENTIALSFLOW";
         private const string ProdInstance = "https://hpadb2cprod.b2clogin.com";

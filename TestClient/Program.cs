@@ -24,21 +24,8 @@ var from = DateTime.Now.AddDays(-7);
 var to = DateTime.Now;
 
 // Fetch Aggregated Measurements data
-var measurementsLine = await api.GetAggregatedMeasurements(line, null, from, to, IntervalDuration.EveryHour,
-    MeasurementType.Current, AggregationType.Average);
-var measurementsSpan = await api.GetAggregatedMeasurements(line, span, from, to, IntervalDuration.EveryHour,
-    MeasurementType.Current, AggregationType.Average);
-
-// Fetch Icing data
-var icingLine = await api.GetIcingData(line, null, null, from, to);
-var icingSpan = await api.GetIcingData(null, span, null, from, to);
-var icingSpanPhase = await api.GetIcingData(null, span, spanPhase, from, to);
-
-
-// Fetch Sag and Clearances data
-var sagAndClearancesLine = await api.GetSagAndClearances(line, null, null, from, to);
-var sagAndClearancesSpan = await api.GetSagAndClearances(line, span, null, from, to);
-var sagAndClearancesSpanPhase = await api.GetSagAndClearances(line, null, spanPhase, from, to);
+var measurementsLine = await api.GetLatestCurrent(line);
+var measurementsSpan = await api.GetLatestConductorTemperature(line);
 
 // Fetch DLR data
 var aggregatedDLR = await api.GetAggregatedDlr(line, from, to, DLRType.HP, "P1D");

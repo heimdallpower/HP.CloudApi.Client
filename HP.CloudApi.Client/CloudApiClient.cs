@@ -25,50 +25,34 @@ namespace HeimdallPower
         /// </summary>
         public async Task<List<LineDto>> GetLines()
         {
-            var url = UrlBuilder.GetFullUrl("lines");
+            var url = UrlBuilder.GetFullUrlOld("lines");
             var response = await _heimdallClient.Get<ApiResponse<List<LineDto>>>(url);
             return response == null ? new List<LineDto>() : response.Data.ToList();
         }
-
+        
         /// <summary>
-        /// Get aggregated measurements per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
+        /// Get latest current for a line
         /// </summary>
-        public async Task<List<AggregatedFloatValueDto>> GetAggregatedMeasurements(LineDto line, SpanDto span,
-            DateTime from, DateTime to, string intervalDuration, MeasurementType measurementType,
-            AggregationType aggregationType)
+        public async Task<AggregatedFloatValueDto> GetLatestCurrent(LineDto line, string unitSystem = "metric")
         {
-            if (!intervalDuration.IsValidIso8601Duration())
-            {
-                throw new ArgumentException($"Interval duration '{intervalDuration}' is not a valid ISO 8601 string");
-            }
-            var url = UrlBuilder.BuildAggregatedMeasurementsUrl(line, span, from, to, intervalDuration,
-                measurementType,
-                aggregationType);
-            var response = await _heimdallClient.Get<ApiResponse<List<AggregatedFloatValueDto>>>(url);
-
-            return response != null ? response.Data.ToList() : new();
+            var url = UrlBuilder.BuildLatestCurrentsUrl(line);
+            var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
+            if (response == null) return new AggregatedFloatValueDto();
+            return new AggregatedFloatValueDto
+                { IntervalStartTime = response.Data.Current.Timestamp, Value = response.Data.Current.Value };
         }
-
+        
         /// <summary>
-        /// Get icing data per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
+        /// Get latest temperature for a line
         /// </summary>
-        public async Task<LineDto<IcingDataDto>> GetIcingData(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
+        public async Task<AggregatedFloatValueDto> GetLatestConductorTemperature(LineDto line, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
         {
-            var url = UrlBuilder.BuildIcingUrl(line, span, spanPhase, from, to);
-            var response = await _heimdallClient.Get<ApiResponse<LineDto<IcingDataDto>>>(url);
-
-            return response != null ? response.Data : new();
-        }
-
-        /// <summary>
-        /// Get sag and clearances per spanPhase belonging to the most specific Line, Span or SpanPhase supplied (spanPhase > span > line).
-        /// </summary>
-        public async Task<List<LineDto<SagAndClearanceDto>>> GetSagAndClearances(LineDto line, SpanDto span, SpanPhaseDto spanPhase, DateTime from, DateTime to)
-        {
-            var url = UrlBuilder.BuildSagAndClearanceUrl(line, span, spanPhase, from, to);
-            var response = await _heimdallClient.Get<ApiResponse<List<LineDto<SagAndClearanceDto>>>>(url);
-
-            return response != null ? response.Data : new();
+                var url = UrlBuilder.BuildLatestConductorTemperatureUrl(line, unitSystem);
+                var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url); 
+                if (response == null) return new AggregatedFloatValueDto();
+                return aggregationType == AggregationType.Max ? 
+                    new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Max } 
+                    : new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Min };
         }
 
         /// <summary>
