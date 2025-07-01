@@ -4,14 +4,25 @@ using Newtonsoft.Json;
 
 namespace HeimdallPower.Entities;
 
-public class AarForecastDto
+public sealed class AarForecastDto
 {
     [JsonProperty("aar_forecasts")]
-    public List<AarForecast> AarForecast { get; set; }
+    public List<AarForecast> AarForecasts { get; }
+
+    public AarForecastDto(List<AarForecast> aarForecasts)
+    {
+        AarForecasts = aarForecasts;
+    }
 }
 
-public class AarForecast
+public sealed class AarForecast
 {
-    public DateTime Timestamp { get; set; }
-    public PredictionDto Prediction { get; set; }
+    public DateTime Timestamp { get; }
+    public PredictionDto Prediction { get; }
+
+    public AarForecast(DateTime timestamp, PredictionDto prediction)
+    {
+        Timestamp = timestamp;
+        Prediction = prediction;
+    }
 }

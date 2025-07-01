@@ -2,13 +2,24 @@
 
 namespace HeimdallPower.Entities;
 
-public class HeimdallAarDto
+public sealed class HeimdallAarDto
 {
-    public HeimdallAar Aar { get; set; }
+    public HeimdallAar Aar { get; }
+
+    public HeimdallAarDto(HeimdallAar aar)
+    {
+        Aar = aar;
+    }
 }
 
-public class HeimdallAar
+public sealed class HeimdallAar
 {
-    public DateTime Timestamp { get; set; }
-    public double Value { get; set; }
+    public DateTime Timestamp { get; }
+    public double Value { get; }
+
+    public HeimdallAar(DateTime timestamp, double value)
+    {
+        Timestamp = timestamp;
+        Value = value;
+    }
 }

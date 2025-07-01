@@ -1,12 +1,16 @@
 ﻿using System;
 using Newtonsoft.Json;
 
-namespace HeimdallPower.Entities
+namespace HeimdallPower.Entities;
+public sealed class PredictionDto
 {
-    public class PredictionDto
+    public double Value { get; }
+    [JsonProperty("at_span_id")]
+    public Guid SpanId { get; }
+
+    public PredictionDto(double value, Guid spanId)
     {
-        public double Value { get; set; }
-        [JsonProperty("at_span_id")]
-        public Guid SpanId { get; set; }
+        Value = value;
+        SpanId = spanId;
     }
 }

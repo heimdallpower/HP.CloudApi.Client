@@ -103,7 +103,7 @@ namespace HeimdallPower
             var url = UrlBuilder.BuildDlrForecastUrl(line);
             var response = await _heimdallClient.Get<ApiResponse<AarForecastDto>>(url);
 
-            return response != null ? response.Data.AarForecast : new();
+            return response != null ? response.Data.AarForecasts : new List<AarForecast>();
         }
     }
 }

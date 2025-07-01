@@ -2,13 +2,24 @@
 
 namespace HeimdallPower.Entities;
 
-public class HeimdallDlrDto
+public sealed class HeimdallDlrDto
 {
-    public HeimdallDlr Dlr { get; set; }
+    public HeimdallDlr Dlr { get; }
+
+    public HeimdallDlrDto(HeimdallDlr dlr)
+    {
+        Dlr = dlr;
+    }
 }
 
-public class HeimdallDlr
+public sealed class HeimdallDlr
 {
-    public DateTime Timestamp { get; set; }
-    public double Value { get; set; }
+    public DateTime Timestamp { get; }
+    public double Value { get; }
+
+    public HeimdallDlr(DateTime timestamp, double value)
+    {
+        Timestamp = timestamp;
+        Value = value;
+    }
 }
