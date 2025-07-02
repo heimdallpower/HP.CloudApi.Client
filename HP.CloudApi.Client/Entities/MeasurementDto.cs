@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace HeimdallPower.Entities
+namespace HeimdallPower.Entities;
+
+public class MeasurementDto
 {
-    public class MeasurementDto
-    {
-        public DateTime Timestamp;
-        public double Value;
-    }
+    public DateTime Timestamp;
+    public double Value;
 }
