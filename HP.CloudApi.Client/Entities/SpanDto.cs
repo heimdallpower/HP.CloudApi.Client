@@ -2,13 +2,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace HeimdallPower.Entities
-{
-    public class SpanDto<T> where T : class
-    {
-        public Guid Id { get; set; }
-        public IEnumerable<SpanPhaseDto<T>> SpanPhases { get; set; }
-    }
+namespace HeimdallPower.Entities;
     public class SpanDto
     {
         public Guid Id { get; set; }
@@ -19,4 +13,3 @@ namespace HeimdallPower.Entities
         [JsonProperty("span_phases")]
         public IEnumerable<SpanPhaseDto> SpanPhases { get; set; }
     }
-}

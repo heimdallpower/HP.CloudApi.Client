@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using HeimdallPower.Entities;
 using HeimdallPower.Enums;
-using HeimdallPower.ExtensionMethods;
 
 namespace HeimdallPower
 {
@@ -52,26 +49,26 @@ namespace HeimdallPower
         /// <summary>
         /// Get latest current for a line
         /// </summary>
-        public async Task<AggregatedFloatValueDto> GetLatestCurrent(LineDto line, string unitSystem = "metric")
+        public async Task<MeasurementDto> GetLatestCurrent(LineDto line, string unitSystem = "metric")
         {
             var url = UrlBuilder.BuildLatestCurrentsUrl(line);
             var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
-            if (response == null) return new AggregatedFloatValueDto();
-            return new AggregatedFloatValueDto
-                { IntervalStartTime = response.Data.Current.Timestamp, Value = response.Data.Current.Value };
+            if (response == null) return new MeasurementDto();
+            return new MeasurementDto
+                { Timestamp = response.Data.Current.Timestamp, Value = response.Data.Current.Value };
         }
         
         /// <summary>
         /// Get latest temperature for a line
         /// </summary>
-        public async Task<AggregatedFloatValueDto> GetLatestConductorTemperature(LineDto line, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
+        public async Task<MeasurementDto> GetLatestConductorTemperature(LineDto line, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
         {
                 var url = UrlBuilder.BuildLatestConductorTemperatureUrl(line, unitSystem);
                 var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url); 
-                if (response == null) return new AggregatedFloatValueDto();
+                if (response == null) return new MeasurementDto();
                 return aggregationType == AggregationType.Max ? 
-                    new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Max } 
-                    : new AggregatedFloatValueDto { IntervalStartTime = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Min };
+                    new MeasurementDto { Timestamp = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Max } 
+                    : new MeasurementDto { Timestamp = response.Data.ConductorTemperatures.Timestamp, Value = response.Data.ConductorTemperatures.Min };
         }
 
         /// <summary>
@@ -82,7 +79,7 @@ namespace HeimdallPower
             var url = UrlBuilder.BuildHeimdallDlrUrl(line);
             var response = await _heimdallClient.Get<ApiResponse<HeimdallDlrDto>>(url);
             if (response?.Data == null) return new DLRDto();
-            return new DLRDto() { IntervalStartTime = response.Data.Dlr.Timestamp, Ampacity = response.Data.Dlr.Value };
+            return new DLRDto() { Timestamp = response.Data.Dlr.Timestamp, Ampacity = response.Data.Dlr.Value };
         }
         
         /// <summary>
@@ -93,7 +90,7 @@ namespace HeimdallPower
             var url = UrlBuilder.BuildHeimdallAarUrl(line);
             var response = await _heimdallClient.Get<ApiResponse<HeimdallAarDto>>(url);
             if (response?.Data == null) return new DLRDto();
-            return new DLRDto() { IntervalStartTime = response.Data.Aar.Timestamp, Ampacity = response.Data.Aar.Value };
+            return new DLRDto() { Timestamp = response.Data.Aar.Timestamp, Ampacity = response.Data.Aar.Value };
         }
 
         /// <summary>

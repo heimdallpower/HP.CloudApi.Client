@@ -5,7 +5,7 @@ namespace HeimdallPower.Entities
     public class DLRDto
     {
         private double _ampacity;
-        public DateTime IntervalStartTime { get; set; }
+        public DateTime Timestamp { get; set; }
         public double Ampacity
         {
             get => _ampacity;

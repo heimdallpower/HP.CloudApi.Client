@@ -2,9 +2,9 @@
 
 namespace HeimdallPower.Entities
 {
-    public class AggregatedFloatValueDto
+    public class MeasurementDto
     {
-        public DateTime IntervalStartTime;
+        public DateTime Timestamp;
         public double Value;
     }
 }
