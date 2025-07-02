@@ -24,8 +24,8 @@ var measurementsLine = await api.GetLatestCurrent(line);
 var measurementsSpan = await api.GetLatestConductorTemperature(line);
 
 // Fetch DLR data
-var latestAar = await api.GetLatestDlr(line, DLRType.HeimdallAar);
-var latestDlr = await api.GetLatestDlr(line, DLRType.HeimdallDLR);
-var forecastAar = await api.GetDlrForecast(line,DLRType.HeimdallAar);
-var forecastDlr = await api.GetDlrForecast(line,DLRType.HeimdallDLR);
+var latestAar = await api.GetLatestHeimdallDlr(line);
+var latestDlr = await api.GetLatestHeimdallAar(line);
+var forecastAar = await api.GetHeimdallDlrForecast(line);
+var forecastDlr = await api.GetHeimdallAarForecast(line);
 Console.WriteLine(forecastAar.First().Timestamp);
