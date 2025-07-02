@@ -1,15 +1,14 @@
 ﻿using System;
 
-namespace HeimdallPower.Entities
+namespace HeimdallPower.Entities;
+
+public class DLRDto
 {
-    public class DLRDto
+    private double _ampacity;
+    public DateTime Timestamp { get; set; }
+    public double Ampacity
     {
-        private double _ampacity;
-        public DateTime IntervalStartTime { get; set; }
-        public double Ampacity
-        {
-            get => _ampacity;
-            set => _ampacity = Math.Round(value);
-        }
+        get => _ampacity;
+        set => _ampacity = Math.Round(value);
     }
 }
