@@ -75,29 +75,47 @@ namespace HeimdallPower
         }
 
         /// <summary>
-        /// Get aggregated dynamic line ratings for a line
+        /// Get latest Heimdall dynamic line ratings for a line
         /// </summary>
-        public async Task<List<DLRDto>> GetAggregatedDlr(LineDto line, DateTime from, DateTime to, DLRType dlrType, string intervalDuration)
+        public async Task<DLRDto> GetLatestHeimdallDlr(LineDto line)
         {
-            if (!intervalDuration.IsValidIso8601Duration())
-            {
-                throw new ArgumentException($"Interval duration '{intervalDuration}' is not a valid ISO 8601 string");
-            }
-            var url = UrlBuilder.BuildAggregatedDlrUrl(line, from, to, dlrType, intervalDuration);
-            var response = await _heimdallClient.Get<ApiResponse<List<DLRDto>>>(url);
-
-            return response != null ? response.Data : new();
+            var url = UrlBuilder.BuildHeimdallDlrUrl(line);
+            var response = await _heimdallClient.Get<ApiResponse<HeimdallDlrDto>>(url);
+            if (response?.Data == null) return new DLRDto();
+            return new DLRDto() { IntervalStartTime = response.Data.Dlr.Timestamp, Ampacity = response.Data.Dlr.Value };
+        }
+        
+        /// <summary>
+        /// Get latest Heimdall ambient-adjusted rating for a line
+        /// </summary>
+        public async Task<DLRDto> GetLatestHeimdallAar(LineDto line)
+        {
+            var url = UrlBuilder.BuildHeimdallAarUrl(line);
+            var response = await _heimdallClient.Get<ApiResponse<HeimdallAarDto>>(url);
+            if (response?.Data == null) return new DLRDto();
+            return new DLRDto() { IntervalStartTime = response.Data.Aar.Timestamp, Ampacity = response.Data.Aar.Value };
         }
 
         /// <summary>
-        /// Get hourly DLR forecasts (Cigre) up to 48 hours ahead in time
+        /// Get hourly Heimdall DLR forecasts up to 240 hours ahead in time
         /// </summary>
-        public async Task<List<LineAggregatedDLRForecastDto>> GetAggregatedDlrForecast(LineDto line, int hoursAhead, DLRType? dlrType = null)
+        public async Task<List<ForecastDto>> GetHeimdallDlrForecast(LineDto line)
         {
-            var url = UrlBuilder.BuildAggregatedDlrForecastUrl(line, hoursAhead, dlrType);
-            var response = await _heimdallClient.Get<ApiResponse<List<LineAggregatedDLRForecastDto>>>(url);
+            var url = UrlBuilder.BuildDlrForecastUrl(line);
+            var response = await _heimdallClient.Get<ApiResponse<DlrForecastDto>>(url);
 
-            return response != null ? response.Data : new();
+            return response?.Data != null ? response.Data.DlrForecasts : new List<ForecastDto>();
+        }
+        
+        /// <summary>
+        /// Get hourly Heimdall AAR forecasts up to 240 hours ahead in time
+        /// </summary>
+        public async Task<List<ForecastDto>> GetHeimdallAarForecast(LineDto line)
+        {
+            var url = UrlBuilder.BuildAarForecastUrl(line);
+            var response = await _heimdallClient.Get<ApiResponse<AarForecastDto>>(url);
+
+            return response?.Data != null ? response.Data.AarForecasts : new List<ForecastDto>();
         }
     }
 }

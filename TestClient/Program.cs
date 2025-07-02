@@ -18,15 +18,14 @@ var api = new CloudApiClient(clientId, clientSecret, useDeveloperApi);
 // Fetch Lines data
 var lines = await api.GetLines();
 var line = lines.FirstOrDefault(line => line.Name.Equals(lineName));
-var span = line.Spans.First();
-var spanPhase = span.SpanPhases.ToList().First();
-var from = DateTime.Now.AddDays(-7);
-var to = DateTime.Now;
 
 // Fetch Aggregated Measurements data
 var measurementsLine = await api.GetLatestCurrent(line);
 var measurementsSpan = await api.GetLatestConductorTemperature(line);
 
 // Fetch DLR data
-var aggregatedDLR = await api.GetAggregatedDlr(line, from, to, DLRType.HP, "P1D");
-var forecastDLR = await api.GetAggregatedDlrForecast(line, 24, DLRType.HeimdallDLR);
+var latestAar = await api.GetLatestHeimdallDlr(line);
+var latestDlr = await api.GetLatestHeimdallAar(line);
+var forecastAar = await api.GetHeimdallDlrForecast(line);
+var forecastDlr = await api.GetHeimdallAarForecast(line);
+Console.WriteLine(forecastAar.First().Timestamp);
