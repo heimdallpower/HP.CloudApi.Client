@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <LangVersion>10</LangVersion>
+    <TargetFramework>net9.0</TargetFramework>
     <Company>Heimdall Power</Company>
     <Authors>Heimdall Power</Authors>
     <PackageId>HeimdallPower.CloudApi.Client</PackageId>
