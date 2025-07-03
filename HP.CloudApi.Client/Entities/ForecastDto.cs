@@ -11,7 +11,7 @@ public sealed class ForecastDto
     public PredictionDto P95 { get; }
     public PredictionDto P99 { get; }
 
-    public ForecastDto(DateTime timestamp, PredictionDto prediction,  PredictionDto p80, PredictionDto p90, PredictionDto p95, PredictionDto p99)
+    public ForecastDto(DateTime timestamp, PredictionDto prediction, PredictionDto p80, PredictionDto p90, PredictionDto p95, PredictionDto p99)
     {
         Timestamp = timestamp;
         Prediction = prediction;
