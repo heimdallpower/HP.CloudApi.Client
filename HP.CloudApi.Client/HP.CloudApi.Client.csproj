@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
-    <LangVersion>10</LangVersion>
     <Company>Heimdall Power</Company>
     <Authors>Heimdall Power</Authors>
     <PackageId>HeimdallPower.CloudApi.Client</PackageId>
