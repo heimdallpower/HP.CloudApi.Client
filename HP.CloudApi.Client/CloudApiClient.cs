@@ -35,7 +35,7 @@ namespace HeimdallPower
                     .Where(facility => facility.Line != null)
                     .Select(facility =>
                     {
-                        facility.Line.Owner = go.Name;
+                        facility.Line.GridOwnerName = go.Name;
                         return facility.Line;
                     }))
                 .ToList();
@@ -58,7 +58,7 @@ namespace HeimdallPower
                     .Where(facility => facility.Line != null)
                 .Select(facility =>
                     {
-                        facility.Line.Owner = go.Name;
+                        facility.Line.GridOwnerName = go.Name;
                         return facility;
                     }))
                 .ToList();

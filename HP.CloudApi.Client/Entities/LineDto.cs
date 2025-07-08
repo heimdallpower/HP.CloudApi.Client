@@ -10,6 +10,6 @@ public class LineDto
     public string Name { get; set; }
     [JsonProperty("available_forecast_hours")]
     public int AvailableForecastHours;
-    public string Owner {get; set;}
+    public string GridOwnerName {get; set;}
     public List<SpanDto> Spans;
 }
