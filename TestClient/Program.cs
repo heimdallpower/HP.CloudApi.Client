@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using HeimdallPower;
 using HeimdallPower.Enums;
 
@@ -19,6 +18,10 @@ var api = new CloudApiClient(clientId, clientSecret, useDeveloperApi);
 var lines = await api.GetLines();
 var line = lines.FirstOrDefault(line => line.Name.Equals(lineName));
 
+// Fetch Facilities data
+var facilities = await api.GetFacilities();
+var facility = facilities.FirstOrDefault(f => f.Line.Name.Equals(lineName));
+
 // Fetch Aggregated Measurements data
 var measurementsLine = await api.GetLatestCurrent(line);
 var measurementsSpan = await api.GetLatestConductorTemperature(line);
@@ -28,4 +31,8 @@ var latestAar = await api.GetLatestHeimdallDlr(line);
 var latestDlr = await api.GetLatestHeimdallAar(line);
 var forecastAar = await api.GetHeimdallDlrForecast(line);
 var forecastDlr = await api.GetHeimdallAarForecast(line);
+
+// Fetch Circuit Rating data
+var circuitRatingForecast = await api.GetCircuitRatingForecast(facility);
+
 Console.WriteLine(forecastAar.First().Timestamp);
