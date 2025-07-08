@@ -23,16 +23,16 @@ var facilities = await api.GetFacilities();
 var facility = facilities.FirstOrDefault(f => f.Line.Name.Equals(lineName));
 
 // Fetch Aggregated Measurements data
-var measurementsLine = await api.GetLatestCurrent(line);
-var measurementsSpan = await api.GetLatestConductorTemperature(line);
+var measurementsLine = await api.GetLatestCurrent(line.Id);
+var measurementsSpan = await api.GetLatestConductorTemperature(line.Id);
 
 // Fetch DLR data
-var latestAar = await api.GetLatestHeimdallDlr(line);
-var latestDlr = await api.GetLatestHeimdallAar(line);
-var forecastAar = await api.GetHeimdallDlrForecast(line);
-var forecastDlr = await api.GetHeimdallAarForecast(line);
+var latestDlr = await api.GetLatestHeimdallDlr(line.Id);
+var latestAar = await api.GetLatestHeimdallAar(line.Id);
+var forecastDlr = await api.GetHeimdallDlrForecast(line.Id);
+var forecastAar = await api.GetHeimdallAarForecast(line.Id);
 
 // Fetch Circuit Rating data
-var circuitRatingForecast = await api.GetCircuitRatingForecast(facility);
+var circuitRatingForecast = await api.GetCircuitRatingForecast(facility.Id);
 
 Console.WriteLine(forecastAar.First().Timestamp);

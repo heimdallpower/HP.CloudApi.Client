@@ -64,7 +64,7 @@ namespace HeimdallPower
         public static string BuildAssetsUrl()
             => GetResourceUrl(module: Assets, apiVersion: V1, resource: AssetsResource);
 
-        public static string BuildCircuitRatingForeceastUrl(Guid facilityId)
+        public static string BuildCircuitRatingForecastUrl(Guid facilityId)
             => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Facilities, resourceId: facilityId.ToString(), endpoint: CircuitRatingForecasts);
         
         private static string GetResourceUrl(string module, string apiVersion, string resource)
