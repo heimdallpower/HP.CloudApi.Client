@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -46,10 +46,9 @@ namespace HeimdallPower
         /// </summary>
         public async Task<List<FacilityDto>> GetFacilities()
         {
-            
             var url = UrlBuilder.BuildAssetsUrl();
             var response = await _heimdallClient.Get<AssetsResponseObject>(url);
-
+            
             if (response?.Data == null) return new List<FacilityDto>();
 
             return response.Data.GridOwners

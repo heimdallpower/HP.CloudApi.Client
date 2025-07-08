@@ -5,8 +5,8 @@ namespace HeimdallPower.Entities;
 public sealed class FacilityDto
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
-    public LineDto Line { get; set; }
+    public string Name { get; }
+    public LineDto Line { get; }
 
     public FacilityDto(string name, LineDto line)
     {
