@@ -37,14 +37,6 @@ namespace HeimdallPower
             
             return GetFullUrl(module: GridInsight, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: ConductorTemperatures, queryParams: queryParams);
         }
-        
-        public static string BuildLatestConductorTemperatureUrl(string lineId, string unitSystem)
-        {
-            var queryParams = new NameValueCollection()
-                .AddQueryParam("unit_system", unitSystem);
-            
-            return GetFullUrl(module: GridInsight, apiVersion: V1, resource: Lines, resourceId: lineId, endpoint: ConductorTemperatures, queryParams: queryParams);
-        }
 
         public static string BuildLatestCurrentsUrl(Guid lineId)
             => GetFullUrl(module: GridInsight, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: Currents);
