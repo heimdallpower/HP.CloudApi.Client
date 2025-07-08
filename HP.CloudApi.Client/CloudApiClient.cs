@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using HeimdallPower.Entities;
 using HeimdallPower.Enums;
@@ -24,34 +26,50 @@ namespace HeimdallPower
         {
             var url = UrlBuilder.BuildAssetsUrl();
             var response = await _heimdallClient.Get<AssetsResponseObject>(url);
-            
-            var lines = new List<LineDto>();
-            
-            if (response?.Data == null) return lines;
 
-            foreach (var gridOwner in response.Data.GridOwners)
-            {
-                if (gridOwner.Facilities == null) continue;
-                foreach (var facility in gridOwner.Facilities)
-                {
-                    if (facility.Line == null) 
-                        continue;
-                        
-                    var facilityLine = facility.Line;
-                    facilityLine.Owner = gridOwner.Name;
-                    lines.Add(facilityLine);
-                }
-            }
+            if (response?.Data == null) return new List<LineDto>();
 
-            return lines;
+            return response.Data.GridOwners
+                .Where(go => go.Facilities != null)
+                .SelectMany(go => go.Facilities
+                    .Where(facility => facility.Line != null)
+                    .Select(facility =>
+                    {
+                        facility.Line.GridOwnerName = go.Name;
+                        return facility.Line;
+                    }))
+                .ToList();
+        }
+        
+        /// <summary>
+        /// Get a list of all facilities.
+        /// </summary>
+        public async Task<List<FacilityDto>> GetFacilities()
+        {
+            
+            var url = UrlBuilder.BuildAssetsUrl();
+            var response = await _heimdallClient.Get<AssetsResponseObject>(url);
+
+            if (response?.Data == null) return new List<FacilityDto>();
+
+            return response.Data.GridOwners
+                .Where(go => go.Facilities != null)
+                .SelectMany(go => go.Facilities
+                    .Where(facility => facility.Line != null)
+                .Select(facility =>
+                    {
+                        facility.Line.GridOwnerName = go.Name;
+                        return facility;
+                    }))
+                .ToList();
         }
         
         /// <summary>
         /// Get latest current for a line
         /// </summary>
-        public async Task<MeasurementDto> GetLatestCurrent(LineDto line, string unitSystem = "metric")
+        public async Task<MeasurementDto> GetLatestCurrent(Guid lineId, string unitSystem = "metric")
         {
-            var url = UrlBuilder.BuildLatestCurrentsUrl(line);
+            var url = UrlBuilder.BuildLatestCurrentsUrl(lineId);
             var response = await _heimdallClient.Get<ApiResponse<CurrentDto>>(url);
             if (response == null) return new MeasurementDto();
             return new MeasurementDto
@@ -61,9 +79,9 @@ namespace HeimdallPower
         /// <summary>
         /// Get latest temperature for a line
         /// </summary>
-        public async Task<MeasurementDto> GetLatestConductorTemperature(LineDto line, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
+        public async Task<MeasurementDto> GetLatestConductorTemperature(Guid lineId, AggregationType aggregationType = AggregationType.Max, string unitSystem = "metric")
         {
-                var url = UrlBuilder.BuildLatestConductorTemperatureUrl(line, unitSystem);
+                var url = UrlBuilder.BuildLatestConductorTemperatureUrl(lineId, unitSystem);
                 var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url); 
                 if (response == null) return new MeasurementDto();
                 return aggregationType == AggregationType.Max ? 
@@ -74,9 +92,9 @@ namespace HeimdallPower
         /// <summary>
         /// Get latest Heimdall dynamic line ratings for a line
         /// </summary>
-        public async Task<DLRDto> GetLatestHeimdallDlr(LineDto line)
+        public async Task<DLRDto> GetLatestHeimdallDlr(Guid lineId)
         {
-            var url = UrlBuilder.BuildHeimdallDlrUrl(line);
+            var url = UrlBuilder.BuildHeimdallDlrUrl(lineId);
             var response = await _heimdallClient.Get<ApiResponse<HeimdallDlrDto>>(url);
             if (response?.Data == null) return new DLRDto();
             return new DLRDto() { Timestamp = response.Data.Dlr.Timestamp, Ampacity = response.Data.Dlr.Value };
@@ -85,20 +103,20 @@ namespace HeimdallPower
         /// <summary>
         /// Get latest Heimdall ambient-adjusted rating for a line
         /// </summary>
-        public async Task<DLRDto> GetLatestHeimdallAar(LineDto line)
+        public async Task<DLRDto> GetLatestHeimdallAar(Guid lineId)
         {
-            var url = UrlBuilder.BuildHeimdallAarUrl(line);
+            var url = UrlBuilder.BuildHeimdallAarUrl(lineId);
             var response = await _heimdallClient.Get<ApiResponse<HeimdallAarDto>>(url);
             if (response?.Data == null) return new DLRDto();
             return new DLRDto() { Timestamp = response.Data.Aar.Timestamp, Ampacity = response.Data.Aar.Value };
         }
 
         /// <summary>
-        /// Get hourly Heimdall DLR forecasts up to 240 hours ahead in time
+        /// Get hourly Heimdall DLR forecasts up to 72 hours ahead in time
         /// </summary>
-        public async Task<List<ForecastDto>> GetHeimdallDlrForecast(LineDto line)
+        public async Task<List<ForecastDto>> GetHeimdallDlrForecast(Guid lineId)
         {
-            var url = UrlBuilder.BuildDlrForecastUrl(line);
+            var url = UrlBuilder.BuildDlrForecastUrl(lineId);
             var response = await _heimdallClient.Get<ApiResponse<DlrForecastDto>>(url);
 
             return response?.Data != null ? response.Data.DlrForecasts : new List<ForecastDto>();
@@ -107,12 +125,27 @@ namespace HeimdallPower
         /// <summary>
         /// Get hourly Heimdall AAR forecasts up to 240 hours ahead in time
         /// </summary>
-        public async Task<List<ForecastDto>> GetHeimdallAarForecast(LineDto line)
+        public async Task<List<ForecastDto>> GetHeimdallAarForecast(Guid lineId)
         {
-            var url = UrlBuilder.BuildAarForecastUrl(line);
+            var url = UrlBuilder.BuildAarForecastUrl(lineId);
             var response = await _heimdallClient.Get<ApiResponse<AarForecastDto>>(url);
 
             return response?.Data != null ? response.Data.AarForecasts : new List<ForecastDto>();
+        }
+        
+        /// <summary>
+        /// Get the most recent circuit rating forecasts for a specified facility.
+        /// The forecasted hours returned by the endpoint are set to 72 hours
+        /// and are provided in 1-hour intervals.
+        /// </summary>
+        /// <param name="facilityId">Id of the facility for which to retrieve circuit rating forecasts.</param>
+
+        public async Task<IReadOnlyList<ForecastDto>> GetCircuitRatingForecast(Guid facilityId)
+        {
+            var url = UrlBuilder.BuildCircuitRatingForecastUrl(facilityId);
+            var response = await _heimdallClient.Get<ApiResponse<CircuitRatingForecastDto>>(url);
+
+            return response?.Data != null ? response.Data.CircuitRatingForecasts : new List<ForecastDto>();
         }
     }
 }

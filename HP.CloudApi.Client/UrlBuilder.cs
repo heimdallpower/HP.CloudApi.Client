@@ -9,6 +9,20 @@ namespace HeimdallPower
 {
     internal static class UrlBuilder
     {
+        //Modules
+        private const string CapacityMonitoring = "capacity_monitoring";
+        private const string GridInsight = "grid_insights";
+        private const string Assets = "assets";
+        
+        private const string V1 = "v1";
+        
+        //Resources
+        private const string Lines = "lines";
+        private const string Facilities = "facilities";
+        private const string AssetsResource = "assets";
+        
+        //Endpoints
+        private const string CircuitRatingForecasts = "circuit_ratings/forecasts";
         private const string ConductorTemperatures = "conductor_temperatures/latest";
         private const string Currents = "currents/latest";
         private const string HeimdallDlr = "heimdall_dlrs/latest";
@@ -16,55 +30,42 @@ namespace HeimdallPower
         private const string HeimdallDlrForecast = "heimdall_dlrs/forecasts";
         private const string HeimdallAarForecast = "heimdall_aars/forecasts";
 
-        private const string CapacityMonitoring = "capacity_monitoring";
-        private const string GridInsight = "grid_insights";
-        private const string V1 = "v1/lines";
-
-        public static string BuildLatestConductorTemperatureUrl(LineDto line, string unitSystem)
+        public static string BuildLatestConductorTemperatureUrl(Guid lineId, string unitSystem)
         {
             var queryParams = new NameValueCollection()
                 .AddQueryParam("unit_system", unitSystem);
-            return GetFullUrl(ConductorTemperatures, GridInsight, queryParams, line.Id.ToString());
+            
+            return GetFullUrl(module: GridInsight, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: ConductorTemperatures, queryParams: queryParams);
         }
 
-        public static string BuildLatestCurrentsUrl(LineDto line)
-        {
-            return GetFullUrl(Currents, GridInsight, line.Id.ToString());
-        }
+        public static string BuildLatestCurrentsUrl(Guid lineId)
+            => GetFullUrl(module: GridInsight, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: Currents);
 
-        public static string BuildHeimdallDlrUrl(LineDto line)
-        {
-            return GetFullUrl(HeimdallDlr, CapacityMonitoring, line.Id.ToString());
-        }
+        public static string BuildHeimdallDlrUrl(Guid lineId)
+            => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint:HeimdallDlr);
         
-        public static string BuildHeimdallAarUrl(LineDto line)
-        {
-            return GetFullUrl(HeimdallAar, CapacityMonitoring, line.Id.ToString());
-        }
+        public static string BuildHeimdallAarUrl(Guid lineId)
+            => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: HeimdallAar);
 
-        public static string BuildDlrForecastUrl(LineDto line)
-        {
-            return GetFullUrl(HeimdallDlrForecast, CapacityMonitoring, line.Id.ToString());
-        }
+        public static string BuildDlrForecastUrl(Guid lineId)
+            => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: HeimdallDlrForecast);
         
-        public static string BuildAarForecastUrl(LineDto line)
-        {
-            return GetFullUrl(HeimdallAarForecast, CapacityMonitoring, line.Id.ToString());
-        }
+        public static string BuildAarForecastUrl(Guid lineId)
+            => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: HeimdallAarForecast);
         
         public static string BuildAssetsUrl()
-        {
-            return "assets/v1/assets";
-        }
-        
-        private static string GetFullUrl(string endpoint, string module, NameValueCollection queryParams, string lineId, string apiVersion = V1)
-        {
-            return $"{module}/{apiVersion}/{lineId}/{endpoint}{queryParams.ToQueryString()}";
-        }
+            => GetResourceUrl(module: Assets, apiVersion: V1, resource: AssetsResource);
 
-        private static string GetFullUrl(string endpoint, string module, string lineId, string apiVersion = V1)
-        {
-            return $"{module}/{apiVersion}/{lineId}/{endpoint}";
-        }
+        public static string BuildCircuitRatingForecastUrl(Guid facilityId)
+            => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Facilities, resourceId: facilityId.ToString(), endpoint: CircuitRatingForecasts);
+        
+        private static string GetResourceUrl(string module, string apiVersion, string resource)
+            => $"{module}/{apiVersion}/{resource}";
+
+        private static string GetFullUrl(string module, string apiVersion, string resource, string resourceId, string endpoint)
+            => $"{GetResourceUrl(module, apiVersion, resource)}/{resourceId}/{endpoint}";
+        
+        private static string GetFullUrl(string module, string apiVersion, string resource, string resourceId, string endpoint, NameValueCollection queryParams)
+            => $"{GetResourceUrl(module, apiVersion, resource)}/{resourceId}/{endpoint}{queryParams.ToQueryString()}";
     }
 }
