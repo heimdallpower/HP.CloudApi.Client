@@ -43,7 +43,7 @@ namespace HeimdallPower
             => GetFullUrl(module: GridInsight, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: Currents);
 
         public static string BuildHeimdallDlrUrl(Guid lineId)
-            => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint:HeimdallDlr);
+            => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: HeimdallDlr);
         
         public static string BuildHeimdallAarUrl(Guid lineId)
             => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Lines, resourceId: lineId.ToString(), endpoint: HeimdallAar);

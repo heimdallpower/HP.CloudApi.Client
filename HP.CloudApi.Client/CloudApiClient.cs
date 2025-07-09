@@ -154,12 +154,12 @@ namespace HeimdallPower
         /// </summary>
         /// <param name="facilityId">Id of the facility for which to retrieve circuit rating forecasts.</param>
 
-        public async Task<CircuitRatingResponse> GetLatestCircuitRating(Guid facilityId)
+        public async Task<CircuitRatingResponse?> GetLatestCircuitRating(Guid facilityId)
         {
             var url = UrlBuilder.BuildCircuitRatingUrl(facilityId);
             var response = await _heimdallClient.Get<ApiResponse<CircuitRatingResponse>>(url);
-
-            return response.Data;
+            
+            return response?.Data;
         }
     }
 }

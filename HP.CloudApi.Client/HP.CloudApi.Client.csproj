@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
     <Company>Heimdall Power</Company>
     <Authors>Heimdall Power</Authors>
     <PackageId>HeimdallPower.CloudApi.Client</PackageId>
