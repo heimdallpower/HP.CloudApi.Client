@@ -23,6 +23,7 @@ namespace HeimdallPower
         
         //Endpoints
         private const string CircuitRatingForecasts = "circuit_ratings/forecasts";
+        private const string CircuitRatingLatest = "circuit_ratings/latest";
         private const string ConductorTemperatures = "conductor_temperatures/latest";
         private const string Currents = "currents/latest";
         private const string HeimdallDlr = "heimdall_dlrs/latest";
@@ -58,6 +59,9 @@ namespace HeimdallPower
 
         public static string BuildCircuitRatingForecastUrl(Guid facilityId)
             => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Facilities, resourceId: facilityId.ToString(), endpoint: CircuitRatingForecasts);
+        
+        public static string BuildCircuitRatingUrl(Guid facilityId)
+            => GetFullUrl(module: CapacityMonitoring, apiVersion: V1, resource: Facilities, resourceId: facilityId.ToString(), endpoint: CircuitRatingLatest);
         
         private static string GetResourceUrl(string module, string apiVersion, string resource)
             => $"{module}/{apiVersion}/{resource}";

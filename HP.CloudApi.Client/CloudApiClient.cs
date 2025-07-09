@@ -142,9 +142,24 @@ namespace HeimdallPower
         public async Task<IReadOnlyList<ForecastDto>> GetCircuitRatingForecast(Guid facilityId)
         {
             var url = UrlBuilder.BuildCircuitRatingForecastUrl(facilityId);
-            var response = await _heimdallClient.Get<ApiResponse<CircuitRatingForecastDto>>(url);
+            var response = await _heimdallClient.Get<ApiResponse<CircuitRatingForecastResponse>>(url);
 
             return response?.Data != null ? response.Data.CircuitRatingForecasts : new List<ForecastDto>();
+        }
+        
+        /// <summary>
+        /// Get the most recent circuit rating forecasts for a specified facility.
+        /// The forecasted hours returned by the endpoint are set to 72 hours
+        /// and are provided in 1-hour intervals.
+        /// </summary>
+        /// <param name="facilityId">Id of the facility for which to retrieve circuit rating forecasts.</param>
+
+        public async Task<CircuitRatingResponse> GetLatestCircuitRating(Guid facilityId)
+        {
+            var url = UrlBuilder.BuildCircuitRatingUrl(facilityId);
+            var response = await _heimdallClient.Get<ApiResponse<CircuitRatingResponse>>(url);
+
+            return response.Data;
         }
     }
 }
