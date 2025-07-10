@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using HeimdallPower;
 using HeimdallPower.Enums;
 
@@ -34,5 +35,6 @@ var forecastAar = await api.GetHeimdallAarForecast(line.Id);
 
 // Fetch Circuit Rating data
 var circuitRatingForecast = await api.GetCircuitRatingForecast(facility.Id);
+var circuitRating = await api.GetLatestCircuitRating(facility.Id);
 
 Console.WriteLine(forecastAar.First().Timestamp);
