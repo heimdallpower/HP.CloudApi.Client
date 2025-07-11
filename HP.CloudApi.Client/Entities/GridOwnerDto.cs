@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace HeimdallPower.Entities;
 
@@ -27,7 +26,6 @@ public record AssetsResponseObject
 
 public record DataResponseObject
 {
-    [JsonProperty("grid_owners")]
     public List<GridOwnerDto> GridOwners { get; }
 
     public DataResponseObject(List<GridOwnerDto> gridOwners)
