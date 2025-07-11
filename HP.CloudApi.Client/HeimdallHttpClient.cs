@@ -3,9 +3,9 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Identity.Client;
-using Newtonsoft.Json;
 
 namespace HeimdallPower
 {
@@ -13,10 +13,10 @@ namespace HeimdallPower
     {
         protected HttpClient HttpClient { get; }
         private readonly IConfidentialClientApplication MsalClient;
+        private readonly JsonSerializerOptions _jsonSerializerOptions;
         private readonly string _scope;
         private readonly string _instance;
         private readonly string _domain;
-        private readonly string _authority;
 
         private const string ProdApiUrl = "https://external-api.heimdallcloud.com";
         private const string DevApiUrl = "https://external-api.heimdallcloud-dev.com";
@@ -38,16 +38,22 @@ namespace HeimdallPower
             _scope = useDeveloperApi ? DevScope : ProdScope;
             _instance = useDeveloperApi ? DevInstance : ProdInstance;
             _domain = useDeveloperApi ? DevDomain : ProdDomain;
-            _authority = useDeveloperApi ? DevAuthority : ProdAuthority;
+            var authority = useDeveloperApi ? DevAuthority : ProdAuthority;
             var apiUrl = useDeveloperApi ? DevApiUrl : ProdApiUrl;
             HttpClient = new() { BaseAddress = new Uri(apiUrl) };
+            _jsonSerializerOptions = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+                PropertyNameCaseInsensitive = true,
+                WriteIndented = true
+            };
             MsalClient = ConfidentialClientApplicationBuilder.Create(clientId)
                 .WithClientSecret(clientSecret)
-                .WithAuthority(_authority)
+                .WithAuthority(authority)
                 .Build();
         }
 
-        public async Task<T> Get<T>(string url)
+        public async Task<T?> Get<T>(string url)
         {
             await UpdateAccessTokenIfExpired();
             var response = await HttpClient.GetAsync(url);
@@ -56,14 +62,11 @@ namespace HeimdallPower
 
             if (response.IsSuccessStatusCode)
             {
-                var result = JsonConvert.DeserializeObject<T>(jsonString);
+                var result = JsonSerializer.Deserialize<T>(jsonString, _jsonSerializerOptions);
                 return result;
             }
-
-            dynamic parsedJson = JsonConvert.DeserializeObject(jsonString);
-            var exceptionString = JsonConvert.SerializeObject(parsedJson, Formatting.Indented);
-            Console.WriteLine($"Request failed, exception: {exceptionString}");
-
+            
+            Console.WriteLine($"Request failed with status code: {response.StatusCode}, response: {jsonString}");
             return default;
         }
 

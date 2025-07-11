@@ -1,12 +1,10 @@
 ﻿using System;
-using Newtonsoft.Json;
 
 namespace HeimdallPower.Entities;
 
 public sealed class ConductorTemperatureDto
 {
     public string Unit {  get; }
-    [JsonProperty("conductor_temperature")]
     public ConductorTemperature ConductorTemperatures { get; }
 
     public ConductorTemperatureDto(string unit, ConductorTemperature conductorTemperatures)
