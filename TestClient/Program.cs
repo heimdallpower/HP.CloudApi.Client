@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using HeimdallPower;
-using HeimdallPower.Enums;
 
 // Configuration setup
 var clientId = "insert-your-client-id-here";
