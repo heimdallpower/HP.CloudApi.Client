@@ -10,16 +10,11 @@ using HeimdallPower.GridInsights.Lines;
 namespace HeimdallPower;
 
 /// <summary>
-/// A client that lets you consume the Heimdall Cloud API
+/// A client that lets you consume the Heimdall Power API
 /// </summary>
-public class CloudApiClient
+public class HeimdallApiClient(string clientId, string clientSecret)
 {
-    private readonly HeimdallHttpClient _heimdallClient;
-
-    public CloudApiClient(string clientId, string clientSecret, bool useDeveloperApi)
-    {
-        _heimdallClient = new HeimdallHttpClient(clientId, clientSecret, useDeveloperApi);
-    }
+    private readonly HeimdallApiHttpClient _heimdallApiClient = new (clientId, clientSecret);
 
     /// <summary>
     /// Get a list of all line objects.
@@ -27,7 +22,7 @@ public class CloudApiClient
     public async Task<List<LineDto>> GetLines()
     {
         var url = UrlBuilder.BuildAssetsUrl();
-        var response = await _heimdallClient.Get<ApiResponse<AssetsResponse>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<AssetsResponse>>(url);
 
         if (response?.Data == null) return new List<LineDto>();
 
@@ -45,7 +40,7 @@ public class CloudApiClient
     public async Task<List<FacilityDto>> GetFacilities()
     {
         var url = UrlBuilder.BuildAssetsUrl();
-        var response = await _heimdallClient.Get<ApiResponse<AssetsResponse>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<AssetsResponse>>(url);
         
         if (response?.Data == null) return new List<FacilityDto>();
 
@@ -61,7 +56,7 @@ public class CloudApiClient
     public async Task<LatestCurrentResponse?> GetLatestCurrent(Guid lineId, string unitSystem = "metric")
     {
         var url = UrlBuilder.BuildLatestCurrentsUrl(lineId);
-        var response = await _heimdallClient.Get<ApiResponse<LatestCurrentResponse>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<LatestCurrentResponse>>(url);
         
         return response?.Data;
     }
@@ -69,10 +64,10 @@ public class CloudApiClient
     /// <summary>
     /// Get latest temperature for a line
     /// </summary>
-    public async Task<ConductorTemperatureDto?> GetLatestConductorTemperature(Guid lineId, string unitSystem = "metric")
+    public async Task<LatestConductorTemperatureResponse?> GetLatestConductorTemperature(Guid lineId, string unitSystem = "metric")
     {
         var url = UrlBuilder.BuildLatestConductorTemperatureUrl(lineId, unitSystem);
-        var response = await _heimdallClient.Get<ApiResponse<ConductorTemperatureDto>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<LatestConductorTemperatureResponse>>(url);
         return response?.Data;
     }
 
@@ -82,7 +77,7 @@ public class CloudApiClient
     public async Task<LatestHeimdallDlrResponse?> GetLatestHeimdallDlr(Guid lineId)
     {
         var url = UrlBuilder.BuildHeimdallDlrUrl(lineId);
-        var response = await _heimdallClient.Get<ApiResponse<LatestHeimdallDlrResponse>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<LatestHeimdallDlrResponse>>(url);
         
         return response?.Data;
     }
@@ -93,7 +88,7 @@ public class CloudApiClient
     public async Task<LatestHeimdallAarResponse?> GetLatestHeimdallAar(Guid lineId)
     {
         var url = UrlBuilder.BuildHeimdallAarUrl(lineId);
-        var response = await _heimdallClient.Get<ApiResponse<LatestHeimdallAarResponse>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<LatestHeimdallAarResponse>>(url);
         
         return response?.Data;
     }
@@ -104,7 +99,7 @@ public class CloudApiClient
     public async Task<HeimdallDlrForecastResponse?> GetHeimdallDlrForecast(Guid lineId)
     {
         var url = UrlBuilder.BuildDlrForecastUrl(lineId);
-        var response = await _heimdallClient.Get<ApiResponse<HeimdallDlrForecastResponse>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<HeimdallDlrForecastResponse>>(url);
 
         return response?.Data;
     }
@@ -115,7 +110,7 @@ public class CloudApiClient
     public async Task<HeimdallAarForecastResponse?> GetHeimdallAarForecast(Guid lineId)
     {
         var url = UrlBuilder.BuildAarForecastUrl(lineId);
-        var response = await _heimdallClient.Get<ApiResponse<HeimdallAarForecastResponse>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<HeimdallAarForecastResponse>>(url);
 
         return response?.Data;
     }
@@ -130,7 +125,7 @@ public class CloudApiClient
     public async Task<CircuitRatingForecastResponse?> GetCircuitRatingForecast(Guid facilityId)
     {
         var url = UrlBuilder.BuildCircuitRatingForecastUrl(facilityId);
-        var response = await _heimdallClient.Get<ApiResponse<CircuitRatingForecastResponse>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<CircuitRatingForecastResponse>>(url);
 
         return response?.Data;
     }
@@ -145,7 +140,7 @@ public class CloudApiClient
     public async Task<CircuitRatingResponse?> GetLatestCircuitRating(Guid facilityId)
     {
         var url = UrlBuilder.BuildCircuitRatingUrl(facilityId);
-        var response = await _heimdallClient.Get<ApiResponse<CircuitRatingResponse>>(url);
+        var response = await _heimdallApiClient.Get<ApiResponse<CircuitRatingResponse>>(url);
         
         return response?.Data;
     }

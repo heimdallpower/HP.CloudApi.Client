@@ -5,13 +5,12 @@ using HeimdallPower;
 // Configuration setup
 var clientId = "insert-your-client-id-here";
 var clientSecret = "insert-your-client-secret-here";
-var useDeveloperApi = true;
-var lineName = useDeveloperApi ? "Heimdall Power Line" : "Strøm Trafo - Fv";
+var lineName = "Strøm Trafo - Fv";
 
 Console.WriteLine("Initiating cloud API test client");
 
 // Instantiate Cloud API Client
-var api = new CloudApiClient(clientId, clientSecret, useDeveloperApi);
+var api = new HeimdallApiClient(clientId, clientSecret);
 
 // Fetch Lines data
 var lines = await api.GetLines();
