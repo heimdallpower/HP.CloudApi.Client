@@ -10,7 +10,7 @@ using HeimdallPower.GridInsights.Lines;
 namespace HeimdallPower;
 
 /// <summary>
-/// A client that lets you consume the Heimdall Cloud API
+/// A client that lets you consume the Heimdall Power API
 /// </summary>
 public class HeimdallApiClient(string clientId, string clientSecret)
 {
