@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
-using System.Threading.Tasks;
 using HeimdallPower;
-using HeimdallPower.Enums;
 
 // Configuration setup
 var clientId = "insert-your-client-id-here";
@@ -37,4 +35,4 @@ var forecastAar = await api.GetHeimdallAarForecast(line.Id);
 var circuitRatingForecast = await api.GetCircuitRatingForecast(facility.Id);
 var circuitRating = await api.GetLatestCircuitRating(facility.Id);
 
-Console.WriteLine(forecastAar.First().Timestamp);
+Console.WriteLine(forecastAar.HeimdallAarForecasts.First());
