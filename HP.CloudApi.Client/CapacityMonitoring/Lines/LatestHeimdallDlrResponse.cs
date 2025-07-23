@@ -1,8 +1,21 @@
-using System.Text.Json.Serialization;
-
 namespace HeimdallPower.CapacityMonitoring.Lines;
 
-public record LatestHeimdallDlrResponse(
-    [property: JsonPropertyName("metric")] string Metric, 
-    [property: JsonPropertyName("unit")] string Unit, 
-    [property: JsonPropertyName("heimdall_dlr")] HeimdallDlrDto HeimdallDlr);
+public record LatestHeimdallDlrResponse
+{
+    /// <summary>
+    /// The kind of data this response contains.
+    /// </summary>
+    /// <example>Heimdall DLR</example>
+    public string Metric { get; init; }
+
+    /// <summary>
+    /// The unit of the value in the response.
+    /// </summary>
+    /// <example>Ampere</example>
+    public string Unit { get; init; }
+
+    /// <summary>
+    /// The latest Heimdall DLR value and timestamp.
+    /// </summary>
+    public HeimdallDlrDto HeimdallDlr { get; init; }
+}

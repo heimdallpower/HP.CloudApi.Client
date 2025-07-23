@@ -1,8 +1,21 @@
-using System.Text.Json.Serialization;
-
 namespace HeimdallPower.GridInsights.Lines;
 
-public record LatestConductorTemperatureResponse(
-    [property: JsonPropertyName("metric")] string Metric, 
-    [property: JsonPropertyName("unit")] string Unit, 
-    [property: JsonPropertyName("conductor_temperature")] ConductorTemperatureDto ConductorTemperature);
+public record LatestConductorTemperatureResponse
+{
+    /// <summary>
+    /// The kind of data this response contains.
+    /// </summary>
+    /// <example>Conductor temperature</example>
+    public string Metric { get; init; }
+
+    /// <summary>
+    /// The unit of the value in the response.
+    /// </summary> 
+    /// <example>C</example>
+    public string Unit { get; init; }
+
+    /// <summary>
+    /// The conductor temperature measurements containing timestamp and min/max values
+    /// </summary>
+    public ConductorTemperatureDto ConductorTemperature { get; init; }
+}

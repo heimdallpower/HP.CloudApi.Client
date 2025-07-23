@@ -1,31 +1,31 @@
 using System;
 using System.Collections.Generic;
 
-namespace HeimdallPower.CapacityMonitoring.Facilities;
+namespace HeimdallPower.CapacityMonitoring.Lines.Forecasts;
 
-public record CircuitRatingForecastResponse
+public record HeimdallDlrForecastResponse
 {
     /// <summary>
-    /// The kind of data does this response contain.
+    /// The kind of data this response contains.
     /// </summary>
-    /// <example>Circuit rating forecast</example>
+    /// <example>Heimdall DLR forecast</example>
     public string Metric { get; init; }
 
     /// <summary>
-    /// The unit of measurement for the metric.
+    /// The unit of the value in the response.
     /// </summary>
-    /// <example>Ampere</example>
+    /// <example>Ampere</example> 
     public string Unit { get; init; }
-    
+
     /// <summary>
     /// The timestamp when the forecasts were last updated.
     /// </summary>
-    /// <example>2024-07-01T12:00:00.001Z</example>
+    /// <example>2024-01-19T10:30:00Z</example>
     public DateTime UpdatedTimestamp { get; init; }
 
     /// <summary>
     /// The forecasts for a 1-hour interval starting from the updated_timestamp.
     /// The predicted forecasts include different percentages of confidence.
     /// </summary>
-    public IReadOnlyList<CircuitRatingForecastDto> CircuitRatingForecasts { get; init; }
+    public IReadOnlyCollection<ForecastDto> HeimdallDlrForecasts { get; init; }
 }
