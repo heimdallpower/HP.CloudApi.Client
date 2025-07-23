@@ -7,7 +7,7 @@ var clientId = "insert-your-client-id-here";
 var clientSecret = "insert-your-client-secret-here";
 var lineName = "Strøm Trafo - Fv";
 
-Console.WriteLine("Initiating cloud API test client");
+Console.WriteLine("Initiating Heimdall API test client");
 
 // Instantiate Cloud API Client
 var api = new HeimdallApiClient(clientId, clientSecret);

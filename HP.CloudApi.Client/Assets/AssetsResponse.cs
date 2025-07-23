@@ -1,6 +1,11 @@
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 
 namespace HeimdallPower.Assets;
 
-public record AssetsResponse([property: JsonPropertyName("grid_owners")] IReadOnlyCollection<GridOwnerDto> GridOwners);
+public class AssetsResponse
+{
+    /// <summary>
+    /// List of grid owners the API consumer has access to.
+    /// </summary>
+    public IReadOnlyCollection<GridOwnerDto> GridOwners { get; init; }
+}
